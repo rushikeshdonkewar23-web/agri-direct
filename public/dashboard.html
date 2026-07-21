@@ -37,31 +37,36 @@
     }
 
     // User Info Set Kara
-    document.getElementById('userInfo').innerText = `${user.name} (${user.role})`;
+    if (user) {
+      document.getElementById('userInfo').innerText = `${user.name} (${user.role})`;
 
-    // Shetkari asel tar 'Add Product' button dakhav
-    if (user.role === 'FARMER') {
-      document.getElementById('addProductBtn').classList.remove('hidden');
+      // Shetkari asel tar 'Add Product' button dakhav
+      if (user.role === 'FARMER') {
+        document.getElementById('addProductBtn').classList.remove('hidden');
+      }
     }
 
     // Load All Products
     async function fetchProducts() {
       try {
-        fetch('/api/products')
+        const res = await fetch('/api/products');
         const products = await res.json();
 
         const grid = document.getElementById('productsGrid');
         grid.innerHTML = '';
 
-        if (products.length === 0) {
+        if (!products || products.length === 0) {
           grid.innerHTML = '<p class="text-gray-500">No products listed yet.</p>';
           return;
         }
 
         products.forEach(p => {
+          // Default Image URL Set
+          const imageUrl = p.image || 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400';
+
           grid.innerHTML += `
             <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition">
-              <img src="${p.image || 'https://via.placeholder.com/300'}" class="w-full h-48 object-cover">
+              <img src="${imageUrl}" alt="${p.title}" class="w-full h-48 object-cover">
               <div class="p-5">
                 <div class="flex justify-between items-start">
                   <h3 class="text-xl font-bold text-gray-800">${p.title}</h3>
@@ -71,7 +76,7 @@
                 <p class="text-gray-600 text-sm mt-1">📍 ${p.district} | Available: <b>${p.quantityAvailable} ${p.unit}</b></p>
                 <p class="text-xs text-gray-400 mt-2">👨‍🌾 Farmer: ${p.farmer ? p.farmer.name : 'Unknown'}</p>
                 
-                ${user.role === 'BUYER' ? `
+                ${user && user.role === 'BUYER' ? `
                   <button onclick="placeOrder('${p._id}')" class="mt-4 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg transition">
                     Buy / Order Now
                   </button>
@@ -81,7 +86,7 @@
           `;
         });
       } catch (err) {
-        console.error(err);
+        console.error("Fetch products error:", err);
       }
     }
 
@@ -94,7 +99,7 @@
       if (!address) return;
 
       try {
-        const res = await fetch('http://localhost:5000/api/orders', {
+        const res = await fetch('/api/orders', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
