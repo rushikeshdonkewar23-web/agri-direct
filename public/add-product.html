@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agri-Direct | Add Crop</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-emerald-50 min-h-screen flex items-center justify-center p-4">
+
+  <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-lg border border-emerald-100">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-emerald-800">🌾 Add New Crop Produce</h2>
+      <a href="dashboard.html" class="text-sm text-gray-500 hover:underline">← Back</a>
+    </div>
+
+    <form onsubmit="handleAddProduct(event)" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Crop Title</label>
+        <input type="text" id="title" required placeholder="e.g., Fresh Organic Tomatoes (टोमॅटो)" class="w-full mt-1 p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Category</label>
+          <select id="category" class="w-full mt-1 p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
+            <option value="Vegetables">Vegetables</option>
+            <option value="Fruits">Fruits</option>
+            <option value="Grains">Grains</option>
+            <option value="Pulses">Pulses</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Price (Per Unit)</label>
+          <input type="number" id="price" required placeholder="30" class="w-full mt-1 p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Unit</label>
+          <input type="text" id="unit" required placeholder="kg / quintal" class="w-full mt-1 p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Quantity Available</label>
+          <input type="number" id="quantityAvailable" required placeholder="500" class="w-full mt-1 p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">District / Location</label>
+        <input type="text" id="district" required placeholder="Nanded" class="w-full mt-1 p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Image URL (Optional)</label>
+        <input type="url" id="image" placeholder="https://..." class="w-full mt-1 p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
+      </div>
+
+      <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow-md transition">Publish Crop Listing</button>
+    </form>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('userToken');
+
+    if (!token) {
+      window.location.href = 'index.html';
+    }
+
+    async function handleAddProduct(e) {
+      e.preventDefault();
+
+      const body = {
+        title: document.getElementById('title').value,
+        category: document.getElementById('category').value,
+        price: Number(document.getElementById('price').value),
+        unit: document.getElementById('unit').value,
+        quantityAvailable: Number(document.getElementById('quantityAvailable').value),
+        district: document.getElementById('district').value,
+        image: document.getElementById('image').value || 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500'
+      };
+
+      try {
+        const res = await fetch('http://localhost:5000/api/products', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(body)
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          alert('🌱 Crop Added Successfully!');
+          window.location.href = 'dashboard.html';
+        } else {
+          alert(data.message || 'Failed to add crop');
+        }
+      } catch (err) {
+        alert('Server connection error!');
+      }
+    }
+  </script>
+</body>
+</html>
