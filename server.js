@@ -9,6 +9,7 @@ connectDB();
 const app = express();
 
 // Middlewares
+app.use(cors()); // CORS Enable केले
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
@@ -25,18 +26,23 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/public/index.html');
 });
 
-const PORT = process.env.PORT || 5000;
+// User Model import try-catch safe
+let User;
+try {
+  User = require('./models/User');
+} catch (e) {
+  User = require('./models/user');
+}
 
 // Admin Routes: Get All Users & Delete User
-const User = require('./models/User'); // किंवा तुमच्या User Model चा पाथ
-
 // 1. Get All Users List
 app.get('/api/admin/users', async (req, res) => {
   try {
     const users = await User.find().select('-password');
     res.json(users);
   } catch (err) {
-    res.status(500).json({ message: 'Error fetching users' });
+    console.error("Admin Fetch Error:", err);
+    res.status(500).json({ message: 'Error fetching users', error: err.message });
   }
 });
 
@@ -46,12 +52,9 @@ app.delete('/api/admin/users/:id', async (req, res) => {
     await User.findByIdAndDelete(req.params.id);
     res.json({ message: 'User deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: 'Error deleting user' });
+    console.error("Admin Delete Error:", err);
+    res.status(500).json({ message: 'Error deleting user', error: err.message });
   }
-});
-
-app.listen(PORT, () => {
-  console.log(`Server started on http://localhost:${PORT}`);
 });
 
 // Bulk Seed Sample Agri Products (Auto-populate Marketplace)
@@ -112,10 +115,15 @@ const seedProducts = [
   }
 ];
 
-// Auto Insert function (if database is empty)
+// Auto Insert function
 async function populateSampleData() {
   try {
-    const Product = require('./models/Product'); // किंवा तुमच्या प्रोजेक्टमधील Product Model चा मार्ग
+    let Product;
+    try {
+      Product = require('./models/Product');
+    } catch (e) {
+      Product = require('./models/product');
+    }
     const count = await Product.countDocuments();
     if (count < 3) {
       await Product.insertMany(seedProducts);
@@ -126,5 +134,9 @@ async function populateSampleData() {
   }
 }
 
-// Call after DB Connection
-populateSampleData();
+// Start Server & Run DB Seed
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server started on http://localhost:${PORT}`);
+  populateSampleData();
+});
