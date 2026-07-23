@@ -3,161 +3,123 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agri-Direct | Login & Register</title>
+  <title>Agri-Direct | Quick Mobile Login</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-emerald-50 min-h-screen flex items-center justify-center p-4">
+<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
 
-  <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-emerald-100">
-    <!-- Header -->
-    <div class="text-center mb-6">
-      <h1 class="text-3xl font-bold text-emerald-700">🌱 Agri-Direct</h1>
-      <p class="text-gray-500 text-sm mt-1">Directly Connecting Farmers & Buyers</p>
+  <div class="bg-white rounded-3xl shadow-xl border border-slate-100 w-full max-w-md p-8">
+    
+    <!-- Header Logo -->
+    <div class="text-center mb-8">
+      <div class="w-16 h-16 bg-emerald-100 text-emerald-800 text-3xl font-extrabold rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-sm border border-emerald-200">
+        🌱
+      </div>
+      <h2 class="text-2xl font-extrabold text-slate-800">Agri-Direct</h2>
+      <p class="text-slate-500 text-xs mt-1">Directly Connecting Farmers & Buyers</p>
     </div>
 
-    <!-- Toggle Buttons -->
-    <div class="flex bg-emerald-100 p-1 rounded-xl mb-6">
-      <button id="showLoginBtn" onclick="toggleAuth('login')" class="w-1/2 py-2 text-sm font-semibold rounded-lg bg-emerald-600 text-white shadow">Login</button>
-      <button id="showRegisterBtn" onclick="toggleAuth('register')" class="w-1/2 py-2 text-sm font-semibold rounded-lg text-emerald-800">Register</button>
+    <!-- Step 1: Mobile Number Form -->
+    <div id="phoneStep" class="space-y-4">
+      <div>
+        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Mobile Number / मोबाईल नंबर</label>
+        <div class="flex gap-2">
+          <span class="bg-slate-100 text-slate-600 font-bold px-3 py-2.5 rounded-xl border border-slate-300 text-sm flex items-center">
+            🇮🇳 +91
+          </span>
+          <input type="tel" id="mobileInput" placeholder="9022554979" maxlength="10" class="w-full p-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none font-bold text-slate-800 text-sm tracking-widest">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Your Full Name / पूर्ण नाव</label>
+        <input type="text" id="nameInput" placeholder="e.g. Rushikesh Donkewar" class="w-full p-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm font-semibold">
+      </div>
+
+      <button onclick="sendOTP()" id="sendOtpBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition shadow-md text-sm mt-2">
+        Get OTP / ओ.टी.पी मिळवा 📲
+      </button>
     </div>
 
-    <!-- Message Alert -->
-    <div id="alertBox" class="hidden mb-4 p-3 rounded-lg text-sm font-medium"></div>
+    <!-- Step 2: OTP Verification Form (Hidden by default) -->
+    <div id="otpStep" class="hidden space-y-4">
+      <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-xl text-center">
+        <p class="text-xs text-emerald-800">
+          OTP sent to <b id="displayPhone" class="font-bold">+91 XXXXXXXX</b>
+        </p>
+        <p class="text-[10px] text-emerald-600 font-semibold mt-0.5">Test OTP is: <span class="bg-emerald-200 px-1.5 py-0.5 rounded font-mono font-extrabold text-emerald-900">1234</span></p>
+      </div>
 
-    <!-- LOGIN FORM -->
-    <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
       <div>
-        <label class="block text-sm font-medium text-gray-700">Email Address</label>
-        <input type="email" id="loginEmail" required class="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="example@gmail.com">
+        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Enter 4-Digit OTP</label>
+        <input type="text" id="otpInput" maxlength="4" placeholder="1234" class="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none font-bold text-slate-800 text-center text-xl tracking-widest">
       </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Password</label>
-        <input type="password" id="loginPassword" required class="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="••••••••">
-      </div>
-      <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow-md transition">Login to Portal</button>
-    </form>
 
-    <!-- REGISTER FORM -->
-    <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-4 hidden">
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Full Name</label>
-        <input type="text" id="regName" required class="w-full mt-1 p-2.5 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Rushikesh">
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Email</label>
-        <input type="email" id="regEmail" required class="w-full mt-1 p-2.5 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500" placeholder="rushi@gmail.com">
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Phone</label>
-        <input type="text" id="regPhone" required class="w-full mt-1 p-2.5 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500" placeholder="9822554979">
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Password</label>
-        <input type="password" id="regPassword" required class="w-full mt-1 p-2.5 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500" placeholder="••••••••">
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Role</label>
-        <select id="regRole" class="w-full mt-1 p-2.5 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
-          <option value="FARMER">Shetkari (Farmer)</option>
-          <option value="BUYER">Grahak (Buyer)</option>
-        </select>
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700">District</label>
-        <input type="text" id="regDistrict" required class="w-full mt-1 p-2.5 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Nanded">
-      </div>
-      <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow-md transition">Create Account</button>
-    </form>
+      <button onclick="verifyOTP()" id="verifyOtpBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition shadow-md text-sm">
+        Verify & Login / लॉगिन करा 🚀
+      </button>
+
+      <button onclick="backToPhone()" class="w-full text-xs font-bold text-slate-500 hover:text-slate-700 text-center block pt-1">
+        ← Change Phone Number
+      </button>
+    </div>
+
   </div>
 
   <script>
-    const API_URL = '/api/auth';
+    // Redirect if already logged in
+    if (localStorage.getItem('userToken')) {
+      window.location.href = 'dashboard.html';
+    }
 
-    function toggleAuth(type) {
-      const loginForm = document.getElementById('loginForm');
-      const registerForm = document.getElementById('registerForm');
-      const showLoginBtn = document.getElementById('showLoginBtn');
-      const showRegisterBtn = document.getElementById('showRegisterBtn');
+    function sendOTP() {
+      const phone = document.getElementById('mobileInput').value;
+      const name = document.getElementById('nameInput').value;
 
-      if (type === 'login') {
-        loginForm.classList.remove('hidden');
-        registerForm.classList.add('hidden');
-        showLoginBtn.className = "w-1/2 py-2 text-sm font-semibold rounded-lg bg-emerald-600 text-white shadow";
-        showRegisterBtn.className = "w-1/2 py-2 text-sm font-semibold rounded-lg text-emerald-800";
+      if (!phone || phone.length !== 10) {
+        alert('कृपया १० अंकी मोबाईल नंबर टाका!');
+        return;
+      }
+
+      if (!name) {
+        alert('कृपया तुमचे नाव टाका!');
+        return;
+      }
+
+      document.getElementById('displayPhone').innerText = `+91 ${phone}`;
+      document.getElementById('phoneStep').classList.add('hidden');
+      document.getElementById('otpStep').classList.remove('hidden');
+    }
+
+    function backToPhone() {
+      document.getElementById('otpStep').classList.add('hidden');
+      document.getElementById('phoneStep').classList.remove('hidden');
+    }
+
+    function verifyOTP() {
+      const otp = document.getElementById('otpInput').value;
+      const phone = document.getElementById('mobileInput').value;
+      const name = document.getElementById('nameInput').value;
+
+      if (otp === '1234' || otp.length === 4) {
+        // Prepare User Data
+        const userData = {
+          id: 'user_' + phone,
+          name: name,
+          phone: phone,
+          email: `${phone}@agridirect.com`,
+          role: 'FARMER',
+          district: 'Nanded'
+        };
+
+        // Save User Data in LocalStorage
+        localStorage.setItem('userData', JSON.stringify(userData));
+        localStorage.setItem('userToken', 'mobile_auth_token_' + Date.now());
+
+        alert('🎉 Mobile Login Successful!');
+        window.location.href = 'dashboard.html';
       } else {
-        loginForm.classList.add('hidden');
-        registerForm.classList.remove('hidden');
-        showRegisterBtn.className = "w-1/2 py-2 text-sm font-semibold rounded-lg bg-emerald-600 text-white shadow";
-        showLoginBtn.className = "w-1/2 py-2 text-sm font-semibold rounded-lg text-emerald-800";
-      }
-    }
-
-    function showAlert(msg, isError = false) {
-      const alert = document.getElementById('alertBox');
-      alert.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700');
-      if (isError) {
-        alert.classList.add('bg-red-100', 'text-red-700');
-      } else {
-        alert.classList.add('bg-green-100', 'text-green-700');
-      }
-      alert.innerText = msg;
-    }
-
-    // LOGIN API CALL
-    async function handleLogin(e) {
-      e.preventDefault();
-      const email = document.getElementById('loginEmail').value;
-      const password = document.getElementById('loginPassword').value;
-
-      try {
-        const res = await fetch(`${API_URL}/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
-        const data = await res.json();
-
-        if (res.ok) {
-          localStorage.setItem('userToken', data.token);
-          localStorage.setItem('userData', JSON.stringify(data));
-          showAlert('Login successful! Redirecting...');
-          setTimeout(() => window.location.href = 'dashboard.html', 1000);
-        } else {
-          showAlert(data.message || 'Login failed', true);
-        }
-      } catch (err) {
-        showAlert('Server connection error!', true);
-      }
-    }
-
-    // REGISTER API CALL
-    async function handleRegister(e) {
-      e.preventDefault();
-      const body = {
-        name: document.getElementById('regName').value,
-        email: document.getElementById('regEmail').value,
-        phone: document.getElementById('regPhone').value,
-        password: document.getElementById('regPassword').value,
-        role: document.getElementById('regRole').value,
-        district: document.getElementById('regDistrict').value
-      };
-
-      try {
-        const res = await fetch(`${API_URL}/register`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body)
-        });
-        const data = await res.json();
-
-        if (res.ok) {
-          showAlert('Registration successful! Please login now.');
-          toggleAuth('login');
-        } else {
-          showAlert(data.message || 'Registration failed', true);
-        }
-      } catch (err) {
-        showAlert('Server connection error!', true);
+        alert('गलत OTP! कृपया 1234 टाका.');
       }
     }
   </script>

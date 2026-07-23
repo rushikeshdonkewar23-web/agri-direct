@@ -15,13 +15,13 @@
         <span>🌱</span> Agri-Direct
       </h1>
       <div class="flex items-center gap-3">
-        <a href="profile.html" class="bg-emerald-900 border border-emerald-700 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-full text-xs md:text-sm font-medium transition flex items-center gap-1.5">
+        <a href="profile.html" class="bg-emerald-900 border border-emerald-700 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-full text-xs md:text-sm font-medium transition flex items-center gap-1.5">
           <span>👨‍🌾</span> My Profile
         </a>
-        <a id="myOrdersBtn" href="my-orders.html" class="hidden bg-emerald-900 border border-emerald-700 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-full text-xs md:text-sm font-medium transition flex items-center gap-1.5">
+        <a href="my-orders.html" class="bg-emerald-900 border border-emerald-700 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-full text-xs md:text-sm font-medium transition flex items-center gap-1.5">
           <span>📦</span> Orders
         </a>
-        <a id="addProductBtn" href="add-product.html" class="hidden bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-3.5 py-1.5 rounded-xl text-xs md:text-sm transition shadow-md">+ Add Crop</a>
+        <a href="add-product.html" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-3.5 py-1.5 rounded-xl text-xs md:text-sm transition shadow-md">+ Add Crop</a>
         <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-3.5 py-1.5 rounded-xl text-xs md:text-sm font-semibold transition shadow-md">Logout</button>
       </div>
     </nav>
@@ -32,7 +32,7 @@
       <!-- Hero Banner & Categories Section -->
       <div class="mb-8">
         <h2 class="text-3xl font-extrabold text-slate-800 mb-2">Explore Fresh Crops & Produce 🌾</h2>
-        <p class="text-slate-500 text-sm mb-6">Directly connecting hardworking farmers with local buyers.</p>
+        <p class="text-slate-500 text-sm mb-6">Directly connecting hardworking farmers with buyers across Maharashtra.</p>
 
         <!-- Category Filter Buttons / Cards -->
         <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-3">
@@ -97,7 +97,7 @@
 
         <div>
           <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Delivery Address</label>
-          <textarea id="orderAddress" rows="3" placeholder="Enter your full shop / warehouse address" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm" required></textarea>
+          <textarea id="orderAddress" rows="3" placeholder="Enter your full delivery address" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm" required></textarea>
         </div>
 
         <div class="flex justify-end gap-2 pt-2">
@@ -124,11 +124,6 @@
       window.location.href = 'index.html';
     }
 
-    if (user && user.role === 'FARMER') {
-      document.getElementById('addProductBtn').classList.remove('hidden');
-      document.getElementById('myOrdersBtn').classList.remove('hidden');
-    }
-
     let allProducts = [];
 
     // Load Products
@@ -153,7 +148,7 @@
         grid.innerHTML = `
           <div class="col-span-full py-12 text-center text-slate-400 bg-white rounded-2xl border border-dashed border-slate-300">
             <p class="text-lg font-semibold">No crops listed under this category yet.</p>
-            <p class="text-xs mt-1">Farmers can add new crops using the + Add New Crop button.</p>
+            <p class="text-xs mt-1">Add new crops using the + Add Crop button above.</p>
           </div>
         `;
         return;
@@ -196,11 +191,10 @@
                 </a>
               </div>
 
-              ${user && user.role === 'BUYER' ? `
-                <button onclick="openOrderModal('${p._id}', '${p.title}')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl text-xs transition shadow-sm">
-                  🛒 Direct Buy / Order
-                </button>
-              ` : ''}
+              <!-- Open for All Users -->
+              <button onclick="openOrderModal('${p._id}', '${p.title}')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl text-xs transition shadow-sm">
+                🛒 Direct Buy / Order
+              </button>
             </div>
           </div>
         `;
