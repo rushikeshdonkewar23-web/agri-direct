@@ -14,10 +14,12 @@
       <h1 class="text-2xl font-bold tracking-wide flex items-center gap-2">
         <span>🌱</span> Agri-Direct
       </h1>
-      <div class="flex items-center gap-4">
-        <span id="userInfo" class="font-medium bg-emerald-900 border border-emerald-700 px-3 py-1 rounded-full text-xs md:text-sm"></span>
-        <a id="addProductBtn" href="add-product.html" class="hidden bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-4 py-2 rounded-xl text-sm transition shadow-md">+ Add New Crop</a>
-        <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-xl text-sm font-semibold transition shadow-md">Logout</button>
+      <div class="flex items-center gap-3">
+        <a href="profile.html" class="bg-emerald-900 border border-emerald-700 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-full text-xs md:text-sm font-medium transition flex items-center gap-1.5">
+          <span>👨‍🌾</span> My Profile
+        </a>
+        <a id="addProductBtn" href="add-product.html" class="hidden bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-3.5 py-1.5 rounded-xl text-xs md:text-sm transition shadow-md">+ Add Crop</a>
+        <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-3.5 py-1.5 rounded-xl text-xs md:text-sm font-semibold transition shadow-md">Logout</button>
       </div>
     </nav>
 
@@ -87,7 +89,6 @@
     }
 
     if (user) {
-      document.getElementById('userInfo').innerText = `${user.name} (${user.role})`;
       if (user.role === 'FARMER') {
         document.getElementById('addProductBtn').classList.remove('hidden');
       }
@@ -166,23 +167,19 @@
 
     // Filter Products by Category (With Active Highlight)
     function filterCategory(category, btnElement) {
-      // 1. Remove Active state from all buttons
       const buttons = document.querySelectorAll('.cat-btn');
       buttons.forEach(btn => {
         btn.classList.remove('bg-emerald-700', 'text-white', 'border-emerald-600');
         btn.classList.add('bg-white', 'text-slate-700', 'border-slate-200');
       });
 
-      // 2. Set Active state on clicked button
       if (btnElement) {
         btnElement.classList.remove('bg-white', 'text-slate-700', 'border-slate-200');
         btnElement.classList.add('bg-emerald-700', 'text-white', 'border-emerald-600');
       }
 
-      // 3. Update Title
       document.getElementById('currentCategoryTitle').innerText = category === 'All' ? 'Available Produce (All)' : `Category: ${category}`;
       
-      // 4. Filter logic
       if (category === 'All') {
         renderProducts(allProducts);
       } else {
