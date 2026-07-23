@@ -34,14 +34,23 @@ try {
   User = require('./models/user');
 }
 
-// Admin Routes: Get All Users & Delete User
+// Product Model import try-catch safe
+let Product;
+try {
+  Product = require('./models/Product');
+} catch (e) {
+  Product = require('./models/product');
+}
+
+// ================= ADMIN ROUTES =================
+
 // 1. Get All Users List
 app.get('/api/admin/users', async (req, res) => {
   try {
     const users = await User.find().select('-password');
     res.json(users);
   } catch (err) {
-    console.error("Admin Fetch Error:", err);
+    console.error("Admin Fetch Users Error:", err);
     res.status(500).json({ message: 'Error fetching users', error: err.message });
   }
 });
@@ -52,10 +61,23 @@ app.delete('/api/admin/users/:id', async (req, res) => {
     await User.findByIdAndDelete(req.params.id);
     res.json({ message: 'User deleted successfully' });
   } catch (err) {
-    console.error("Admin Delete Error:", err);
+    console.error("Admin Delete User Error:", err);
     res.status(500).json({ message: 'Error deleting user', error: err.message });
   }
 });
+
+// 3. Delete Specific Crop/Product (Admin Action)
+app.delete('/api/admin/products/:id', async (req, res) => {
+  try {
+    await Product.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Product deleted successfully' });
+  } catch (err) {
+    console.error("Admin Delete Product Error:", err);
+    res.status(500).json({ message: 'Error deleting product', error: err.message });
+  }
+});
+
+// ================= SEED DATA =================
 
 // Bulk Seed Sample Agri Products (Auto-populate Marketplace)
 const seedProducts = [
@@ -118,12 +140,6 @@ const seedProducts = [
 // Auto Insert function
 async function populateSampleData() {
   try {
-    let Product;
-    try {
-      Product = require('./models/Product');
-    } catch (e) {
-      Product = require('./models/product');
-    }
     const count = await Product.countDocuments();
     if (count < 3) {
       await Product.insertMany(seedProducts);
