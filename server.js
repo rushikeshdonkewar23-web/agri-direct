@@ -27,6 +27,29 @@ app.get('/', (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
+// Admin Routes: Get All Users & Delete User
+const User = require('./models/User'); // किंवा तुमच्या User Model चा पाथ
+
+// 1. Get All Users List
+app.get('/api/admin/users', async (req, res) => {
+  try {
+    const users = await User.find().select('-password');
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching users' });
+  }
+});
+
+// 2. Delete User
+app.delete('/api/admin/users/:id', async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ message: 'User deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error deleting user' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server started on http://localhost:${PORT}`);
 });

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agri-Direct | Admin User Panel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 min-h-screen p-6 md:p-10">
+
+  <div class="max-w-5xl mx-auto">
+    <!-- Header -->
+    <div class="bg-slate-900 text-white p-6 rounded-2xl shadow-lg flex justify-between items-center mb-8">
+      <div>
+        <h1 class="text-2xl font-bold flex items-center gap-2">
+          🛡️ Admin Control Panel
+        </h1>
+        <p class="text-xs text-slate-400 mt-1">Manage all registered users in Agri-Direct Marketplace</p>
+      </div>
+      <a href="dashboard.html" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition">
+        ← Go to Dashboard
+      </a>
+    </div>
+
+    <!-- Stats & Users Count -->
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-bold text-slate-800">Registered Users List</h3>
+      <span id="userCountBadge" class="bg-emerald-100 text-emerald-800 font-bold text-xs px-3 py-1 rounded-full">
+        0 Users
+      </span>
+    </div>
+
+    <!-- Users Table Container -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+      <table class="w-full text-left border-collapse">
+        <thead class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase">
+          <tr>
+            <th class="p-4">User Details</th>
+            <th class="p-4">Contact Info</th>
+            <th class="p-4">Role / District</th>
+            <th class="p-4 text-center">Action</th>
+          </tr>
+        </thead>
+        <tbody id="usersTableBody" class="divide-y divide-slate-100 text-sm">
+          <tr>
+            <td colspan="4" class="p-6 text-center text-slate-400">Loading registered users...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    async function fetchUsers() {
+      try {
+        const res = await fetch('/api/admin/users');
+        const users = await res.json();
+        renderUsers(users);
+      } catch (err) {
+        console.error("Fetch error:", err);
+        document.getElementById('usersTableBody').innerHTML = `
+          <tr><td colspan="4" class="p-6 text-center text-red-500 font-semibold">Failed to load users from database.</td></tr>
+        `;
+      }
+    }
+
+    function renderUsers(users) {
+      const tbody = document.getElementById('usersTableBody');
+      const countBadge = document.getElementById('userCountBadge');
+      tbody.innerHTML = '';
+
+      if (!users || users.length === 0) {
+        countBadge.innerText = '0 Users';
+        tbody.innerHTML = `
+          <tr><td colspan="4" class="p-6 text-center text-slate-400">No users found in database.</td></tr>
+        `;
+        return;
+      }
+
+      countBadge.innerText = `${users.length} Registered Users`;
+
+      users.forEach(u => {
+        tbody.innerHTML += `
+          <tr class="hover:bg-slate-50 transition">
+            <td class="p-4">
+              <p class="font-bold text-slate-800">${u.name || 'Unnamed User'}</p>
+              <p class="text-xs text-slate-400">ID: ${u._id}</p>
+            </td>
+            <td class="p-4">
+              <p class="text-xs text-slate-700 font-medium">📧 ${u.email || 'N/A'}</p>
+              <p class="text-xs text-slate-500 mt-0.5">📞 ${u.phone || 'N/A'}</p>
+            </td>
+            <td class="p-4">
+              <span class="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase border border-emerald-200">
+                ${u.role || 'USER'}
+              </span>
+              <p class="text-xs text-slate-500 mt-1">📍 ${u.district || 'Maharashtra'}</p>
+            </td>
+            <td class="p-4 text-center">
+              <button onclick="deleteUser('${u._id}', '${u.name}')" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold px-3 py-1.5 rounded-lg text-xs transition">
+                🗑️ Delete
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    async function deleteUser(userId, userName) {
+      if (!confirm(`Are you sure you want to remove user "${userName}" from database?`)) return;
+
+      try {
+        const res = await fetch(`/api/admin/users/${userId}`, { method: 'DELETE' });
+        if (res.ok) {
+          alert('🗑️ User deleted successfully!');
+          fetchUsers();
+        } else {
+          alert('Failed to delete user!');
+        }
+      } catch (err) {
+        alert('Server Error during user deletion!');
+      }
+    }
+
+    fetchUsers();
+  </script>
+</body>
+</html>
