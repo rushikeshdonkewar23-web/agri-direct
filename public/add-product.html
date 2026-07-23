@@ -73,10 +73,95 @@
   </div>
 
   <script>
-    const token = localStorage.getItem('userToken');
-    if (!token) {
-      window.location.href = 'index.html';
+  const token = localStorage.getItem('userToken');
+  if (!token) {
+    window.location.href = 'index.html';
+  }
+
+  // Image Compression Helper
+  function compressAndConvertToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxWidth = 800; 
+          const scaleSize = maxWidth / img.width;
+          
+          if (scaleSize < 1) {
+            canvas.width = maxWidth;
+            canvas.height = img.height * scaleSize;
+          } else {
+            canvas.width = img.width;
+            canvas.height = img.height;
+          }
+
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          // Compress quality to 0.7 (70%)
+          resolve(canvas.toDataURL('image/jpeg', 0.7));
+        };
+        img.onerror = (err) => reject(err);
+      };
+      reader.onerror = (err) => reject(err);
+    });
+  }
+
+  async function handleAddProduct(e) {
+    e.preventDefault();
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.innerText = "Uploading Image & Adding Crop...";
+    submitBtn.disabled = true;
+
+    const fileInput = document.getElementById('imageFile');
+    let imageBase64 = '';
+
+    if (fileInput.files && fileInput.files[0]) {
+      try {
+        imageBase64 = await compressAndConvertToBase64(fileInput.files[0]);
+      } catch (err) {
+        console.error("Error compressing image:", err);
+      }
     }
+
+    const body = {
+      title: document.getElementById('title').value,
+      category: document.getElementById('category').value,
+      price: Number(document.getElementById('price').value),
+      unit: document.getElementById('unit').value,
+      quantityAvailable: Number(document.getElementById('quantityAvailable').value),
+      district: document.getElementById('district').value,
+      image: imageBase64 || 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500'
+    };
+
+    try {
+      const res = await fetch('/api/products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(body)
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        alert('🎉 Crop Added Successfully with Photo!');
+        window.location.href = 'dashboard.html';
+      } else {
+        alert(data.message || 'Failed to add crop');
+      }
+    } catch (err) {
+      alert('Server Connection Error!');
+    } finally {
+      submitBtn.innerText = "🚀 List Crop on Marketplace";
+      submitBtn.disabled = false;
+    }
+  }
+</script>
 
     // Helper: Convert File to Base64 String
     function convertFileToBase64(file) {
