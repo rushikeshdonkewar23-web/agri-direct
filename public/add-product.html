@@ -3,73 +3,108 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agri-Direct | Add Crop</title>
+  <title>Agri-Direct | Add New Crop</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-emerald-50 min-h-screen flex items-center justify-center p-4">
 
   <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-lg border border-emerald-100">
     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-bold text-emerald-800">🌾 Add New Crop Produce</h2>
-      <a href="dashboard.html" class="text-sm text-gray-500 hover:underline">← Back</a>
+      <h2 class="text-2xl font-bold text-emerald-800">🌾 Add New Crop / Produce</h2>
+      <a href="dashboard.html" class="text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1.5 rounded-lg text-gray-700 font-semibold transition">Back</a>
     </div>
 
-    <form onsubmit="handleAddProduct(event)" class="space-y-4">
+    <form id="addProductForm" onsubmit="handleAddProduct(event)" class="space-y-4">
       <div>
-        <label class="block text-sm font-medium text-gray-700">Crop Title</label>
-        <input type="text" id="title" required placeholder="e.g., Fresh Organic Tomatoes (टोमॅटो)" class="w-full mt-1 p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
+        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Crop Title / Name</label>
+        <input type="text" id="title" placeholder="e.g. Fresh Organic Tomatoes, Kapus, Soyabean" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" required>
       </div>
 
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700">Category</label>
-          <select id="category" class="w-full mt-1 p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
-            <option value="Vegetables">Vegetables</option>
-            <option value="Fruits">Fruits</option>
-            <option value="Grains">Grains</option>
-            <option value="Pulses">Pulses</option>
+          <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Category</label>
+          <select id="category" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" required>
+            <option value="Vegetables">Vegetables (भाजीपाला)</option>
+            <option value="Fruits">Fruits (फळे)</option>
+            <option value="Cotton">Cotton (कापूस)</option>
+            <option value="Halad">Halad / Turmeric (हळद)</option>
+            <option value="Soyabean">Soyabean (सोयाबीन)</option>
+            <option value="Tur">Tur & Grains (तूर व धान्य)</option>
+            <option value="Spices">Spices & Others (मसाले व इतर)</option>
           </select>
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700">Price (Per Unit)</label>
-          <input type="number" id="price" required placeholder="30" class="w-full mt-1 p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
+          <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Price (₹)</label>
+          <input type="number" id="price" placeholder="Price per unit" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" required>
         </div>
       </div>
 
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700">Unit</label>
-          <input type="text" id="unit" required placeholder="kg / quintal" class="w-full mt-1 p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
+          <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Unit</label>
+          <select id="unit" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+            <option value="kg">Per kg</option>
+            <option value="Quintal">Per Quintal (क्विंटल)</option>
+            <option value="Ton">Per Ton</option>
+            <option value="Dozen">Per Dozen</option>
+          </select>
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700">Quantity Available</label>
-          <input type="number" id="quantityAvailable" required placeholder="500" class="w-full mt-1 p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
+          <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Quantity Available</label>
+          <input type="number" id="quantityAvailable" placeholder="e.g. 500" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" required>
         </div>
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700">District / Location</label>
-        <input type="text" id="district" required placeholder="Nanded" class="w-full mt-1 p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
+        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">District / Location</label>
+        <input type="text" id="district" placeholder="e.g. Nanded, Pune, Nashik" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" required>
       </div>
 
+      <!-- Gallery Image Input -->
       <div>
-        <label class="block text-sm font-medium text-gray-700">Image URL (Optional)</label>
-        <input type="url" id="image" placeholder="https://..." class="w-full mt-1 p-2.5 border rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
+        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Select Crop Photo (From Gallery)</label>
+        <input type="file" id="imageFile" accept="image/*" class="w-full p-2 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-emerald-100 file:text-emerald-700 hover:file:bg-emerald-200 cursor-pointer">
       </div>
 
-      <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow-md transition">Publish Crop Listing</button>
+      <button type="submit" id="submitBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow-md transition">
+        🚀 List Crop on Marketplace
+      </button>
     </form>
   </div>
 
   <script>
     const token = localStorage.getItem('userToken');
-
     if (!token) {
       window.location.href = 'index.html';
     }
 
+    // Helper: Convert File to Base64 String
+    function convertFileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+      });
+    }
+
     async function handleAddProduct(e) {
       e.preventDefault();
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.innerText = "Uploading Image & Adding Crop...";
+      submitBtn.disabled = true;
+
+      const fileInput = document.getElementById('imageFile');
+      let imageBase64 = '';
+
+      // Check if user selected an image file
+      if (fileInput.files && fileInput.files[0]) {
+        try {
+          imageBase64 = await convertFileToBase64(fileInput.files[0]);
+        } catch (err) {
+          console.error("Error reading file:", err);
+        }
+      }
 
       const body = {
         title: document.getElementById('title').value,
@@ -78,7 +113,7 @@
         unit: document.getElementById('unit').value,
         quantityAvailable: Number(document.getElementById('quantityAvailable').value),
         district: document.getElementById('district').value,
-        image: document.getElementById('image').value || 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500'
+        image: imageBase64 || 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500' // Default fallback
       };
 
       try {
@@ -93,13 +128,16 @@
 
         const data = await res.json();
         if (res.ok) {
-          alert('🌱 Crop Added Successfully!');
+          alert('🎉 Crop Added Successfully with Photo!');
           window.location.href = 'dashboard.html';
         } else {
           alert(data.message || 'Failed to add crop');
         }
       } catch (err) {
-        alert('Server connection error!');
+        alert('Server Connection Error!');
+      } finally {
+        submitBtn.innerText = "🚀 List Crop on Marketplace";
+        submitBtn.disabled = false;
       }
     }
   </script>
