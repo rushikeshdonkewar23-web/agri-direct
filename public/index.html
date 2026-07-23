@@ -19,7 +19,7 @@
       <p class="text-slate-500 text-xs mt-1">Directly Connecting Farmers & Buyers</p>
     </div>
 
-    <!-- Step 1: Mobile Number Form -->
+    <!-- Step 1: Mobile Number & Gmail Form -->
     <div id="phoneStep" class="space-y-4">
       <div>
         <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Mobile Number / मोबाईल नंबर</label>
@@ -27,13 +27,18 @@
           <span class="bg-slate-100 text-slate-600 font-bold px-3 py-2.5 rounded-xl border border-slate-300 text-sm flex items-center">
             🇮🇳 +91
           </span>
-          <input type="tel" id="mobileInput" placeholder="9022554979" maxlength="10" class="w-full p-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none font-bold text-slate-800 text-sm tracking-widest">
+          <input type="tel" id="mobileInput" placeholder="Enter 10-digit mobile number" maxlength="10" class="w-full p-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none font-semibold text-slate-800 text-sm">
         </div>
       </div>
 
       <div>
         <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Your Full Name / पूर्ण नाव</label>
-        <input type="text" id="nameInput" placeholder="e.g. Rushikesh Donkewar" class="w-full p-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm font-semibold">
+        <input type="text" id="nameInput" placeholder="Enter your full name" class="w-full p-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm font-semibold">
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Email ID / ईमेल आयडी</label>
+        <input type="email" id="emailInput" placeholder="example@gmail.com" class="w-full p-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm font-semibold">
       </div>
 
       <button onclick="sendOTP()" id="sendOtpBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition shadow-md text-sm mt-2">
@@ -41,7 +46,7 @@
       </button>
     </div>
 
-    <!-- Step 2: OTP Verification Form (Hidden by default) -->
+    <!-- Step 2: OTP Verification Form -->
     <div id="otpStep" class="hidden space-y-4">
       <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-xl text-center">
         <p class="text-xs text-emerald-800">
@@ -60,14 +65,13 @@
       </button>
 
       <button onclick="backToPhone()" class="w-full text-xs font-bold text-slate-500 hover:text-slate-700 text-center block pt-1">
-        ← Change Phone Number
+        ← Change Details
       </button>
     </div>
 
   </div>
 
   <script>
-    // Redirect if already logged in
     if (localStorage.getItem('userToken')) {
       window.location.href = 'dashboard.html';
     }
@@ -75,6 +79,7 @@
     function sendOTP() {
       const phone = document.getElementById('mobileInput').value;
       const name = document.getElementById('nameInput').value;
+      const email = document.getElementById('emailInput').value;
 
       if (!phone || phone.length !== 10) {
         alert('कृपया १० अंकी मोबाईल नंबर टाका!');
@@ -83,6 +88,11 @@
 
       if (!name) {
         alert('कृपया तुमचे नाव टाका!');
+        return;
+      }
+
+      if (!email) {
+        alert('कृपया तुमचा ईमेल आयडी टाका!');
         return;
       }
 
@@ -100,19 +110,18 @@
       const otp = document.getElementById('otpInput').value;
       const phone = document.getElementById('mobileInput').value;
       const name = document.getElementById('nameInput').value;
+      const email = document.getElementById('emailInput').value;
 
       if (otp === '1234' || otp.length === 4) {
-        // Prepare User Data
         const userData = {
           id: 'user_' + phone,
           name: name,
           phone: phone,
-          email: `${phone}@agridirect.com`,
+          email: email,
           role: 'FARMER',
           district: 'Nanded'
         };
 
-        // Save User Data in LocalStorage
         localStorage.setItem('userData', JSON.stringify(userData));
         localStorage.setItem('userToken', 'mobile_auth_token_' + Date.now());
 
