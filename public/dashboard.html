@@ -31,28 +31,28 @@
 
         <!-- Category Filter Buttons / Cards -->
         <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-3">
-          <button onclick="filterCategory('All')" class="cat-btn bg-emerald-700 text-white p-3 rounded-xl border border-emerald-600 font-semibold text-xs md:text-sm shadow-sm hover:shadow-md transition text-center flex flex-col items-center gap-1">
-            <span class="text-xl">🌾</span> All Crops
+          <button onclick="filterCategory('All', this)" class="cat-btn bg-emerald-700 text-white p-3 rounded-xl border border-emerald-600 font-semibold text-xs md:text-sm shadow-sm hover:shadow-md transition text-center flex flex-col items-center gap-1">
+            <span class="text-xl">🧺</span> All Crops
           </button>
-          <button onclick="filterCategory('Vegetables')" class="cat-btn bg-white text-slate-700 p-3 rounded-xl border border-slate-200 font-semibold text-xs md:text-sm shadow-sm hover:border-emerald-500 transition text-center flex flex-col items-center gap-1">
+          <button onclick="filterCategory('Vegetables', this)" class="cat-btn bg-white text-slate-700 p-3 rounded-xl border border-slate-200 font-semibold text-xs md:text-sm shadow-sm hover:border-emerald-500 transition text-center flex flex-col items-center gap-1">
             <span class="text-xl">🥦</span> Vegetables
           </button>
-          <button onclick="filterCategory('Fruits')" class="cat-btn bg-white text-slate-700 p-3 rounded-xl border border-slate-200 font-semibold text-xs md:text-sm shadow-sm hover:border-emerald-500 transition text-center flex flex-col items-center gap-1">
+          <button onclick="filterCategory('Fruits', this)" class="cat-btn bg-white text-slate-700 p-3 rounded-xl border border-slate-200 font-semibold text-xs md:text-sm shadow-sm hover:border-emerald-500 transition text-center flex flex-col items-center gap-1">
             <span class="text-xl">🍎</span> Fruits
           </button>
-          <button onclick="filterCategory('Cotton')" class="cat-btn bg-white text-slate-700 p-3 rounded-xl border border-slate-200 font-semibold text-xs md:text-sm shadow-sm hover:border-emerald-500 transition text-center flex flex-col items-center gap-1">
+          <button onclick="filterCategory('Cotton', this)" class="cat-btn bg-white text-slate-700 p-3 rounded-xl border border-slate-200 font-semibold text-xs md:text-sm shadow-sm hover:border-emerald-500 transition text-center flex flex-col items-center gap-1">
             <span class="text-xl">☁️</span> Cotton
           </button>
-          <button onclick="filterCategory('Halad')" class="cat-btn bg-white text-slate-700 p-3 rounded-xl border border-slate-200 font-semibold text-xs md:text-sm shadow-sm hover:border-emerald-500 transition text-center flex flex-col items-center gap-1">
+          <button onclick="filterCategory('Halad', this)" class="cat-btn bg-white text-slate-700 p-3 rounded-xl border border-slate-200 font-semibold text-xs md:text-sm shadow-sm hover:border-emerald-500 transition text-center flex flex-col items-center gap-1">
             <span class="text-xl">🟡</span> Halad
           </button>
-          <button onclick="filterCategory('Soyabean')" class="cat-btn bg-white text-slate-700 p-3 rounded-xl border border-slate-200 font-semibold text-xs md:text-sm shadow-sm hover:border-emerald-500 transition text-center flex flex-col items-center gap-1">
+          <button onclick="filterCategory('Soyabean', this)" class="cat-btn bg-white text-slate-700 p-3 rounded-xl border border-slate-200 font-semibold text-xs md:text-sm shadow-sm hover:border-emerald-500 transition text-center flex flex-col items-center gap-1">
             <span class="text-xl">🌱</span> Soyabean
           </button>
-          <button onclick="filterCategory('Tur')" class="cat-btn bg-white text-slate-700 p-3 rounded-xl border border-slate-200 font-semibold text-xs md:text-sm shadow-sm hover:border-emerald-500 transition text-center flex flex-col items-center gap-1">
+          <button onclick="filterCategory('Tur', this)" class="cat-btn bg-white text-slate-700 p-3 rounded-xl border border-slate-200 font-semibold text-xs md:text-sm shadow-sm hover:border-emerald-500 transition text-center flex flex-col items-center gap-1">
             <span class="text-xl">🫘</span> Tur & Grains
           </button>
-          <button onclick="filterCategory('Spices')" class="cat-btn bg-white text-slate-700 p-3 rounded-xl border border-slate-200 font-semibold text-xs md:text-sm shadow-sm hover:border-emerald-500 transition text-center flex flex-col items-center gap-1">
+          <button onclick="filterCategory('Spices', this)" class="cat-btn bg-white text-slate-700 p-3 rounded-xl border border-slate-200 font-semibold text-xs md:text-sm shadow-sm hover:border-emerald-500 transition text-center flex flex-col items-center gap-1">
             <span class="text-xl">🌶️</span> Spices
           </button>
         </div>
@@ -164,10 +164,25 @@
       });
     }
 
-    // Filter Products by Category
-    function filterCategory(category) {
+    // Filter Products by Category (With Active Highlight)
+    function filterCategory(category, btnElement) {
+      // 1. Remove Active state from all buttons
+      const buttons = document.querySelectorAll('.cat-btn');
+      buttons.forEach(btn => {
+        btn.classList.remove('bg-emerald-700', 'text-white', 'border-emerald-600');
+        btn.classList.add('bg-white', 'text-slate-700', 'border-slate-200');
+      });
+
+      // 2. Set Active state on clicked button
+      if (btnElement) {
+        btnElement.classList.remove('bg-white', 'text-slate-700', 'border-slate-200');
+        btnElement.classList.add('bg-emerald-700', 'text-white', 'border-emerald-600');
+      }
+
+      // 3. Update Title
       document.getElementById('currentCategoryTitle').innerText = category === 'All' ? 'Available Produce (All)' : `Category: ${category}`;
       
+      // 4. Filter logic
       if (category === 'All') {
         renderProducts(allProducts);
       } else {
