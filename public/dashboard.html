@@ -15,8 +15,11 @@
         <span>🌱</span> Agri-Direct
       </h1>
       <div class="flex items-center gap-3">
-        <a href="profile.html" class="bg-emerald-900 border border-emerald-700 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-full text-xs md:text-sm font-medium transition flex items-center gap-1.5">
+        <a href="profile.html" class="bg-emerald-900 border border-emerald-700 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-full text-xs md:text-sm font-medium transition flex items-center gap-1.5">
           <span>👨‍🌾</span> My Profile
+        </a>
+        <a id="myOrdersBtn" href="my-orders.html" class="hidden bg-emerald-900 border border-emerald-700 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-full text-xs md:text-sm font-medium transition flex items-center gap-1.5">
+          <span>📦</span> Orders
         </a>
         <a id="addProductBtn" href="add-product.html" class="hidden bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-3.5 py-1.5 rounded-xl text-xs md:text-sm transition shadow-md">+ Add Crop</a>
         <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-3.5 py-1.5 rounded-xl text-xs md:text-sm font-semibold transition shadow-md">Logout</button>
@@ -72,6 +75,39 @@
     </div>
   </div>
 
+  <!-- Place Order Modal Pop-up -->
+  <div id="orderModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl p-6 shadow-2xl w-full max-w-md border border-slate-100">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold text-slate-800">🛒 Place Order Request</h3>
+        <button onclick="closeOrderModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+      </div>
+
+      <form onsubmit="submitOrder(event)" class="space-y-4">
+        <input type="hidden" id="selectedProductId">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Crop Selected</label>
+          <input type="text" id="selectedCropTitle" class="w-full p-2.5 bg-slate-100 border border-slate-200 rounded-lg text-sm font-semibold text-slate-700" readonly>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Quantity Needed</label>
+          <input type="number" id="orderQuantity" placeholder="e.g. 50" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm" required min="1">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Delivery Address</label>
+          <textarea id="orderAddress" rows="3" placeholder="Enter your full shop / warehouse address" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm" required></textarea>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeOrderModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-lg text-xs font-bold text-slate-700 transition">Cancel</button>
+          <button type="submit" id="confirmOrderBtn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition">Confirm Order</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Developer Branding Footer -->
   <footer class="bg-slate-900 text-slate-400 py-6 text-center border-t border-slate-800 mt-12">
     <p class="text-sm font-medium">
@@ -90,6 +126,7 @@
 
     if (user && user.role === 'FARMER') {
       document.getElementById('addProductBtn').classList.remove('hidden');
+      document.getElementById('myOrdersBtn').classList.remove('hidden');
     }
 
     let allProducts = [];
@@ -105,7 +142,7 @@
       }
     }
 
-    // Render Products Grid with Contact Farmer & WhatsApp Feature
+    // Render Products Grid
     function renderProducts(products) {
       const grid = document.getElementById('productsGrid');
       const countBadge = document.getElementById('productCount');
@@ -125,7 +162,7 @@
       products.forEach(p => {
         const imageUrl = p.image || 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400';
         const farmerName = p.farmer ? p.farmer.name : 'Rushikesh Donkewar';
-        const farmerPhone = (user && user.phone) ? user.phone : '9022554979'; // Fallback phone
+        const farmerPhone = (user && user.phone) ? user.phone : '9022554979';
 
         grid.innerHTML += `
           <div class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-100 flex flex-col justify-between">
@@ -160,7 +197,7 @@
               </div>
 
               ${user && user.role === 'BUYER' ? `
-                <button onclick="placeOrder('${p._id}')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl text-xs transition shadow-sm">
+                <button onclick="openOrderModal('${p._id}', '${p.title}')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl text-xs transition shadow-sm">
                   🛒 Direct Buy / Order
                 </button>
               ` : ''}
@@ -170,7 +207,52 @@
       });
     }
 
-    // Filter Products by Category (With Active Highlight)
+    // Modal Control Functions
+    function openOrderModal(id, title) {
+      document.getElementById('selectedProductId').value = id;
+      document.getElementById('selectedCropTitle').value = title;
+      document.getElementById('orderModal').classList.remove('hidden');
+    }
+
+    function closeOrderModal() {
+      document.getElementById('orderModal').classList.add('hidden');
+    }
+
+    async function submitOrder(e) {
+      e.preventDefault();
+      const confirmBtn = document.getElementById('confirmOrderBtn');
+      confirmBtn.innerText = "Placing Order...";
+
+      const productId = document.getElementById('selectedProductId').value;
+      const quantity = Number(document.getElementById('orderQuantity').value);
+      const deliveryAddress = document.getElementById('orderAddress').value;
+
+      try {
+        const res = await fetch('/api/orders', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ productId, quantity, deliveryAddress })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          alert('🎉 Order Placed Successfully!');
+          closeOrderModal();
+          fetchProducts();
+        } else {
+          alert(data.message || 'Order failed!');
+        }
+      } catch (err) {
+        alert('Server Error!');
+      } finally {
+        confirmBtn.innerText = "Confirm Order";
+      }
+    }
+
+    // Filter Products by Category
     function filterCategory(category, btnElement) {
       const buttons = document.querySelectorAll('.cat-btn');
       buttons.forEach(btn => {
@@ -190,40 +272,6 @@
       } else {
         const filtered = allProducts.filter(p => p.category === category);
         renderProducts(filtered);
-      }
-    }
-
-    // Place Order API Call
-    async function placeOrder(productId) {
-      const qty = prompt('Enter quantity to buy:');
-      if (!qty) return;
-
-      const address = prompt('Enter delivery address:');
-      if (!address) return;
-
-      try {
-        const res = await fetch('/api/orders', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            productId,
-            quantity: Number(qty),
-            deliveryAddress: address
-          })
-        });
-
-        const data = await res.json();
-        if (res.ok) {
-          alert('🎉 Order Placed Successfully!');
-          fetchProducts();
-        } else {
-          alert(data.message || 'Order failed!');
-        }
-      } catch (err) {
-        alert('Server Error!');
       }
     }
 

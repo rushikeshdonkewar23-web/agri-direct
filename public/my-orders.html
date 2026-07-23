@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agri-Direct | Received Orders</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col justify-between">
+
+  <div>
+    <!-- Navbar -->
+    <nav class="bg-emerald-800 text-white p-4 shadow-lg flex justify-between items-center px-6 md:px-12">
+      <h1 class="text-2xl font-bold flex items-center gap-2">
+        <span>🌱</span> Agri-Direct
+      </h1>
+      <div class="flex items-center gap-4">
+        <a href="dashboard.html" class="bg-emerald-700 hover:bg-emerald-600 border border-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition">
+          ← Back to Dashboard
+        </a>
+      </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="max-w-6xl mx-auto p-6 md:p-8">
+      
+      <div class="flex justify-between items-center mb-6 border-b pb-4">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-800">📦 Received Crop Orders</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Manage purchase requests received from local buyers.</p>
+        </div>
+        <span id="orderCount" class="text-xs font-semibold bg-emerald-100 text-emerald-800 px-3.5 py-1.5 rounded-full">0 Orders</span>
+      </div>
+
+      <!-- Orders List Container -->
+      <div id="ordersContainer" class="space-y-4">
+        <p class="text-slate-500 text-sm">Loading received orders...</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-slate-400 py-6 text-center border-t border-slate-800 mt-12">
+    <p class="text-sm font-medium">
+      Designed & Developed with ❤️ by <span class="text-emerald-400 font-bold">Rushikesh Donkewar</span>
+    </p>
+    <p class="text-xs text-slate-500 mt-1">© 2026 Agri-Direct Marketplace • Order Management</p>
+  </footer>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem('userData'));
+    const token = localStorage.getItem('userToken');
+
+    if (!token || !user) {
+      window.location.href = 'index.html';
+    }
+
+    async function fetchMyOrders() {
+      try {
+        const res = await fetch('/api/orders', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const orders = await res.json();
+        renderOrders(orders);
+      } catch (err) {
+        console.error("Error loading orders:", err);
+        document.getElementById('ordersContainer').innerHTML = `<p class="text-red-500 text-sm">Failed to load orders.</p>`;
+      }
+    }
+
+    function renderOrders(orders) {
+      const container = document.getElementById('ordersContainer');
+      const countBadge = document.getElementById('orderCount');
+      container.innerHTML = '';
+      
+      if (!orders || orders.length === 0) {
+        countBadge.innerText = '0 Orders';
+        container.innerHTML = `
+          <div class="py-12 text-center text-slate-400 bg-white rounded-2xl border border-dashed border-slate-300">
+            <p class="text-lg font-semibold">No orders received yet.</p>
+            <p class="text-xs mt-1">When buyers order your listed crops, their requests will appear here.</p>
+          </div>
+        `;
+        return;
+      }
+
+      countBadge.innerText = `${orders.length} Orders`;
+
+      orders.forEach(order => {
+        const cropName = order.product ? order.product.title : 'Crop Item';
+        const buyerName = order.buyer ? order.buyer.name : 'Local Buyer';
+        const totalPrice = order.product ? (order.product.price * order.quantity) : 0;
+        const status = order.status || 'Pending';
+
+        let statusBadge = `<span class="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-xs font-bold">⏳ Pending</span>`;
+        if (status === 'Accepted') statusBadge = `<span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-bold">✅ Accepted</span>`;
+        if (status === 'Rejected') statusBadge = `<span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold">❌ Rejected</span>`;
+
+        container.innerHTML += `
+          <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:shadow-md transition">
+            <div class="space-y-1">
+              <div class="flex items-center gap-3">
+                <h4 class="text-lg font-bold text-slate-800">${cropName}</h4>
+                ${statusBadge}
+              </div>
+              <p class="text-xs text-slate-600">👤 Buyer Name: <b class="text-slate-800">${buyerName}</b></p>
+              <p class="text-xs text-slate-600">📦 Quantity Requested: <b class="text-slate-800">${order.quantity} units</b></p>
+              <p class="text-xs text-slate-600">📍 Delivery Address: <b class="text-slate-800">${order.deliveryAddress || 'Address not provided'}</b></p>
+              <p class="text-sm font-extrabold text-emerald-600 mt-1">Total Amount: ₹${totalPrice}</p>
+            </div>
+
+            ${status === 'Pending' ? `
+              <div class="flex items-center gap-2 w-full md:w-auto">
+                <button onclick="updateOrderStatus('${order._id}', 'Accepted')" class="flex-1 md:flex-none bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition shadow-sm">
+                  Accept Order
+                </button>
+                <button onclick="updateOrderStatus('${order._id}', 'Rejected')" class="flex-1 md:flex-none bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold px-4 py-2 rounded-xl text-xs transition">
+                  Reject
+                </button>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      });
+    }
+
+    async function updateOrderStatus(orderId, status) {
+      try {
+        const res = await fetch(`/api/orders/${orderId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ status })
+        });
+
+        if (res.ok) {
+          alert(`Order marked as ${status}!`);
+          fetchMyOrders();
+        } else {
+          alert('Failed to update order status');
+        }
+      } catch (err) {
+        alert('Server Error!');
+      }
+    }
+
+    fetchMyOrders();
+  </script>
+</body>
+</html>
