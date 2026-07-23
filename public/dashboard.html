@@ -88,10 +88,8 @@
       window.location.href = 'index.html';
     }
 
-    if (user) {
-      if (user.role === 'FARMER') {
-        document.getElementById('addProductBtn').classList.remove('hidden');
-      }
+    if (user && user.role === 'FARMER') {
+      document.getElementById('addProductBtn').classList.remove('hidden');
     }
 
     let allProducts = [];
@@ -107,7 +105,7 @@
       }
     }
 
-    // Render Products Grid
+    // Render Products Grid with Contact Farmer & WhatsApp Feature
     function renderProducts(products) {
       const grid = document.getElementById('productsGrid');
       const countBadge = document.getElementById('productCount');
@@ -126,6 +124,8 @@
 
       products.forEach(p => {
         const imageUrl = p.image || 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400';
+        const farmerName = p.farmer ? p.farmer.name : 'Rushikesh Donkewar';
+        const farmerPhone = (user && user.phone) ? user.phone : '9022554979'; // Fallback phone
 
         grid.innerHTML += `
           <div class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-100 flex flex-col justify-between">
@@ -144,21 +144,26 @@
                 <div class="mt-3 space-y-1 text-xs text-slate-500 border-t border-slate-100 pt-3">
                   <p>📍 Location: <b class="text-slate-700">${p.district}</b></p>
                   <p>📦 Quantity Available: <b class="text-slate-700">${p.quantityAvailable} ${p.unit}</b></p>
-                  <p>👨‍🌾 Farmer: <b class="text-slate-700">${p.farmer ? p.farmer.name : 'Rushikesh'}</b></p>
+                  <p>👨‍🌾 Farmer: <b class="text-slate-700">${farmerName}</b></p>
                 </div>
               </div>
             </div>
 
-            <div class="p-5 pt-0">
+            <div class="p-5 pt-0 space-y-2">
+              <div class="grid grid-cols-2 gap-2">
+                <a href="https://wa.me/91${farmerPhone}?text=Hello%20${farmerName},%20I%20am%20interested%20in%20buying%20your%20${p.title}%20listed%20on%20Agri-Direct." target="_blank" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-3 rounded-xl text-xs transition shadow-sm text-center flex items-center justify-center gap-1">
+                  💬 WhatsApp
+                </a>
+                <a href="tel:${farmerPhone}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded-xl text-xs transition shadow-sm text-center flex items-center justify-center gap-1">
+                  📞 Call
+                </a>
+              </div>
+
               ${user && user.role === 'BUYER' ? `
-                <button onclick="placeOrder('${p._id}')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl transition shadow-sm">
-                  Order Now
+                <button onclick="placeOrder('${p._id}')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl text-xs transition shadow-sm">
+                  🛒 Direct Buy / Order
                 </button>
-              ` : `
-                <div class="text-center py-2 bg-slate-50 rounded-xl border border-slate-100 text-xs font-bold text-slate-400">
-                  Farmer Account (Listing)
-                </div>
-              `}
+              ` : ''}
             </div>
           </div>
         `;
