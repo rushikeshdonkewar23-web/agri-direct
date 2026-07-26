@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const jwt = require('jsonwebtoken');
 const connectDB = require('./config/db');
 
 dotenv.config();
@@ -13,20 +14,10 @@ app.use(cors()); // CORS Enable केले
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Static Files (public folder serve karne)
+// Static Files (public folder serve करणे)
 app.use(express.static('public'));
 
-// Routes
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/products', require('./routes/productRoutes'));
-app.use('/api/orders', require('./routes/orderRoutes'));
-
-// Home Route -> Serve index.html
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/index.html');
-});
-
-// User Model import try-catch safe
+// User Model Import (Try-Catch Safe)
 let User;
 try {
   User = require('./models/User');
@@ -34,13 +25,64 @@ try {
   User = require('./models/user');
 }
 
-// Product Model import try-catch safe
+// Product Model Import (Try-Catch Safe)
 let Product;
 try {
   Product = require('./models/Product');
 } catch (e) {
   Product = require('./models/product');
 }
+
+// ================= ROUTES =================
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/products', require('./routes/productRoutes'));
+app.use('/api/orders', require('./routes/orderRoutes'));
+
+// 🚀 MOBILE QUICK LOGIN API (फिक्स केलेला स्पेशल JWT रूट)
+app.post('/api/auth/mobile-login', async (req, res) => {
+  try {
+    const { name, phone, email } = req.body;
+    
+    if (!phone) {
+      return res.status(400).json({ message: 'Mobile number is required' });
+    }
+
+    // 1. युझर शोधणे किंवा डेटाबेसमध्ये नवीन तयार करणे
+    let user = await User.findOne({ phone });
+    if (!user) {
+      user = new User({
+        name: name || 'Farmer_' + phone.slice(-4),
+        phone: phone,
+        email: email || `${phone}@agridirect.com`,
+        password: 'mobile_login_default_pass'
+      });
+      await user.save();
+    }
+
+    // 2. ओरिजिनल JWT Token तयार करणे (JWT Secret वापरून)
+    const secret = process.env.JWT_SECRET || 'agridirect_secret_key_123';
+    const token = jwt.sign({ id: user._id }, secret, { expiresIn: '30d' });
+
+    res.json({
+      message: 'Login Successful',
+      token: token,
+      user: {
+        id: user._id,
+        name: user.name,
+        phone: user.phone,
+        email: user.email
+      }
+    });
+  } catch (err) {
+    console.error("Mobile Login Error:", err);
+    res.status(500).json({ message: 'Server error during mobile login', error: err.message });
+  }
+});
+
+// Home Route -> Serve index.html
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/public/index.html');
+});
 
 // ================= ADMIN ROUTES =================
 
