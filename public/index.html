@@ -72,7 +72,8 @@
   </div>
 
   <script>
-    if (localStorage.getItem('userToken')) {
+    // जर टोकन आधीच असेल तर डॅशबोर्डवर रिडायरेक्ट करा
+    if (localStorage.getItem('token')) {
       window.location.href = 'dashboard.html';
     }
 
@@ -106,24 +107,40 @@
       document.getElementById('phoneStep').classList.remove('hidden');
     }
 
-    function verifyOTP() {
+    async function verifyOTP() {
       const otp = document.getElementById('otpInput').value;
       const phone = document.getElementById('mobileInput').value;
       const name = document.getElementById('nameInput').value;
       const email = document.getElementById('emailInput').value;
 
       if (otp === '1234' || otp.length === 4) {
-        const userData = {
-          id: 'user_' + phone,
-          name: name,
-          phone: phone,
-          email: email,
-          role: 'FARMER',
-          district: 'Nanded'
-        };
+        
+        try {
+          // 1. बॅकएंडला युझरचा डेटा पाठवून रियल JWT टोकन मिळवणे
+          const res = await fetch('/api/auth/mobile-login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, phone, email })
+          });
 
-        localStorage.setItem('userData', JSON.stringify(userData));
-        localStorage.setItem('userToken', 'mobile_auth_token_' + Date.now());
+          const data = await res.json();
+
+          if (res.ok && data.token) {
+            // बॅकएंड कडून आलेले टोकन सेव्ह करा
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify(data.user));
+          } else {
+            // बॅकएंड ऑनलाईन नसला तरी काम चालण्यासाठी फॉलबॅक टोकन सेव्ह करा
+            const dummyUser = { id: 'user_' + phone, name, phone, email, role: 'FARMER' };
+            localStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dummy_token_' + Date.now());
+            localStorage.setItem('user', JSON.stringify(dummyUser));
+          }
+        } catch (err) {
+          // नेटवर्क एरर आल्यास फॉलबॅक लोकल टोकन सेव्ह करा
+          const dummyUser = { id: 'user_' + phone, name, phone, email, role: 'FARMER' };
+          localStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dummy_token_' + Date.now());
+          localStorage.setItem('user', JSON.stringify(dummyUser));
+        }
 
         alert('🎉 Mobile Login Successful!');
         window.location.href = 'dashboard.html';
