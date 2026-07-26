@@ -13,7 +13,7 @@
 <body class="bg-stone-50 text-slate-800 min-h-screen flex flex-col justify-between">
 
   <div>
-    <!-- Top Alert / Mandi Ticker (Future Expansion) -->
+    <!-- Top Alert / Mandi Ticker -->
     <div class="bg-emerald-950 text-emerald-300 text-[11px] font-medium py-1.5 px-4 text-center border-b border-emerald-800/40">
       ⚡ Live APMC Mandi Update: Soyabean ₹4,650/Qtl | Cotton ₹7,200/Qtl | Turmeric ₹13,400/Qtl
     </div>
@@ -151,16 +151,7 @@
   <script>
     let allProducts = [];
 
-    // 1. Session Auth Check
-    function checkAuth() {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        alert('Please login first to access the Marketplace!');
-        window.location.href = 'index.html';
-      }
-    }
-
-    // 2. Load Products API
+    // 1. Load Products API
     async function loadProducts() {
       try {
         const res = await fetch('/api/products');
@@ -171,18 +162,20 @@
       }
     }
 
-    // 3. Dynamic Rendering
+    // 2. Dynamic Rendering
     function renderProducts(products) {
       const grid = document.getElementById('productGrid');
       const countBadge = document.getElementById('productCount');
       
       grid.innerHTML = '';
-      countBadge.innerText = `${products.length} Crops Available`;
-
+      
       if(!products || products.length === 0) {
+        countBadge.innerText = `0 Crops Available`;
         grid.innerHTML = `<p class="col-span-full text-slate-500 text-center py-12 font-semibold">No crops match your search/filter.</p>`;
         return;
       }
+
+      countBadge.innerText = `${products.length} Crops Available`;
 
       products.forEach(p => {
         const imageUrl = (p.image && p.image.length > 20) 
@@ -226,7 +219,7 @@
       });
     }
 
-    // 4. Filtering and Sorting Logic
+    // 3. Filtering and Sorting Logic
     function filterProducts() {
       const query = document.getElementById('searchInput').value.toLowerCase();
       const selectedDistrict = document.getElementById('districtFilter').value;
@@ -247,7 +240,7 @@
       renderProducts(filtered);
     }
 
-    // 5. Modal Operations
+    // 4. Modal Operations
     function openOrderModal(id, title) {
       const savedUser = JSON.parse(localStorage.getItem('user') || '{}');
       if (savedUser.name) document.getElementById('buyerName').value = savedUser.name;
@@ -263,7 +256,7 @@
       document.getElementById('checkoutForm').reset();
     }
 
-    // 6. Submit Order with JWT
+    // 5. Submit Order with JWT
     async function submitOrder(e) {
       e.preventDefault();
       
@@ -303,14 +296,13 @@
       }
     }
 
-    // 7. Logout
+    // 6. Logout
     function logout() {
       localStorage.clear();
       window.location.href = 'index.html';
     }
 
     // Initialize Page
-    checkAuth();
     loadProducts();
   </script>
 </body>
