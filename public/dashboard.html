@@ -146,7 +146,7 @@
       grid.innerHTML = '';
       countBadge.innerText = `${products.length} Crops Found`;
 
-      if(products.length === 0) {
+      if(!products || products.length === 0) {
         grid.innerHTML = `<p class="col-span-full text-slate-500 text-center py-12 font-semibold">No crops match your search/filter.</p>`;
         return;
       }
@@ -207,6 +207,10 @@
     }
 
     function openOrderModal(id, title) {
+      const savedUser = JSON.parse(localStorage.getItem('user') || '{}');
+      if (savedUser.name) document.getElementById('buyerName').value = savedUser.name;
+      if (savedUser.phone) document.getElementById('buyerPhone').value = savedUser.phone;
+
       document.getElementById('modalProductId').value = id;
       document.getElementById('modalCropTitle').innerText = `Order: ${title}`;
       document.getElementById('orderModal').classList.remove('hidden');
@@ -220,6 +224,13 @@
     async function submitOrder(e) {
       e.preventDefault();
       
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please login first to place an order!');
+        window.location.href = 'index.html';
+        return;
+      }
+
       const productId = document.getElementById('modalProductId').value;
       const buyerName = document.getElementById('buyerName').value;
       const quantity = document.getElementById('orderQuantity').value;
@@ -228,7 +239,10 @@
       try {
         const res = await fetch('/api/orders', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
           body: JSON.stringify({ productId, buyerName, quantity, buyerPhone })
         });
 
