@@ -256,16 +256,9 @@
       document.getElementById('checkoutForm').reset();
     }
 
-    // 5. Submit Order with JWT
+    // 5. Submit Order (Direct Clean API Call)
     async function submitOrder(e) {
       e.preventDefault();
-      
-      const token = localStorage.getItem('token');
-      if (!token) {
-        alert('Please login first to place an order!');
-        window.location.href = 'index.html';
-        return;
-      }
 
       const productId = document.getElementById('modalProductId').value;
       const buyerName = document.getElementById('buyerName').value;
@@ -276,8 +269,7 @@
         const res = await fetch('/api/orders', {
           method: 'POST',
           headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({ productId, buyerName, quantity, buyerPhone })
         });
