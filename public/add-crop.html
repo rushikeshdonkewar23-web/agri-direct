@@ -25,18 +25,34 @@
   <main class="max-w-xl mx-auto p-4 sm:p-6 my-8">
     <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-stone-200">
       <h2 class="text-2xl font-extrabold text-slate-800 mb-1">✨ List Your Crop</h2>
-      <p class="text-xs text-slate-500 mb-6">Add produce details to sell directly to buyers.</p>
+      <p class="text-xs text-slate-500 mb-6">Add produce details and photo to sell directly to buyers.</p>
 
       <form id="addCropForm" onsubmit="handleAddCrop(event)" class="space-y-4">
+        
+        <!-- Direct Image Upload Input with Live Preview -->
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Crop Photo / पिकाचा फोटो</label>
+          <div class="border-2 border-dashed border-stone-300 rounded-2xl p-4 text-center hover:border-emerald-500 transition bg-stone-50 relative">
+            <input type="file" id="imageInput" accept="image/*" onchange="previewImage(event)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+            <div id="uploadPlaceholder" class="space-y-1">
+              <span class="text-3xl">📸</span>
+              <p class="text-xs font-bold text-slate-700">Click to upload photo / फोटो निवडा</p>
+              <p class="text-[10px] text-slate-400">PNG, JPG or JPEG allowed</p>
+            </div>
+            <!-- Image Preview Area -->
+            <img id="imagePreview" class="hidden w-full h-48 object-cover rounded-xl shadow-sm border border-stone-200 mx-auto">
+          </div>
+        </div>
+
         <div>
           <label class="block text-xs font-bold text-slate-600 mb-1">Crop Title / पिकाचे नाव</label>
-          <input type="text" id="title" required placeholder="e.g. Fresh Red Tomato" class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+          <input type="text" id="title" required placeholder="e.g. Fresh Red Tomato" class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none font-medium">
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Category / प्रकार</label>
-            <select id="category" class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+            <select id="category" class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none font-medium">
               <option value="Vegetables">Vegetables (भाज्या)</option>
               <option value="Soyabean">Soyabean (सोयाबीन)</option>
               <option value="Cotton">Cotton (कापूस)</option>
@@ -47,7 +63,7 @@
           </div>
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">District / जिल्हा</label>
-            <select id="district" class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+            <select id="district" class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none font-medium">
               <option value="Nanded">Nanded</option>
               <option value="Nashik">Nashik</option>
               <option value="Yavatmal">Yavatmal</option>
@@ -61,11 +77,11 @@
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Price / दर (₹)</label>
-            <input type="number" id="price" required placeholder="e.g. 50" class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+            <input type="number" id="price" required placeholder="e.g. 50" class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none font-medium">
           </div>
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Unit / एकक</label>
-            <select id="unit" class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+            <select id="unit" class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none font-medium">
               <option value="kg">kg</option>
               <option value="Quintal">Quintal</option>
               <option value="Ton">Ton</option>
@@ -76,20 +92,15 @@
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Stock Quantity</label>
-            <input type="number" id="quantityAvailable" required placeholder="e.g. 500" class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+            <input type="number" id="quantityAvailable" required placeholder="e.g. 500" class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none font-medium">
           </div>
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Contact Phone</label>
-            <input type="tel" id="phone" required placeholder="10-digit number" class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+            <input type="tel" id="phone" required placeholder="10-digit number" class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none font-medium">
           </div>
         </div>
 
-        <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Image URL (Optional)</label>
-          <input type="url" id="image" placeholder="https://..." class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
-        </div>
-
-        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl text-sm transition shadow-lg mt-4">
+        <button type="submit" id="submitBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl text-sm transition shadow-lg mt-4">
           Publish Crop Listing 🚀
         </button>
       </form>
@@ -97,11 +108,38 @@
   </main>
 
   <script>
+    let base64Image = '';
+
+    // Auto-fill logged-in phone
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    if(user.phone) document.getElementById('phone').value = user.phone;
+    if (user.phone) document.getElementById('phone').value = user.phone;
+
+    // Image Preview and Base64 Conversion
+    function previewImage(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          base64Image = e.target.result; // Direct Base64 String
+          
+          const preview = document.getElementById('imagePreview');
+          const placeholder = document.getElementById('uploadPlaceholder');
+          
+          preview.src = base64Image;
+          preview.classList.remove('hidden');
+          placeholder.classList.add('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
 
     async function handleAddCrop(e) {
       e.preventDefault();
+      
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Publishing...';
+
       const token = localStorage.getItem('token');
 
       const cropData = {
@@ -112,7 +150,7 @@
         unit: document.getElementById('unit').value,
         quantityAvailable: Number(document.getElementById('quantityAvailable').value),
         phone: document.getElementById('phone').value,
-        image: document.getElementById('image').value
+        image: base64Image || 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500' // fallback
       };
 
       try {
@@ -134,7 +172,10 @@
         }
       } catch (err) {
         console.error(err);
-        alert('Server Error');
+        alert('Server Error while adding crop');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Publish Crop Listing 🚀';
       }
     }
   </script>
