@@ -109,34 +109,117 @@ app.delete('/api/admin/products/:id', async (req, res) => {
   }
 });
 
-// ================= SEED DATA =================
+// ================= EXTENDED SEED DATA FOR FULL MARKETPLACE =================
 const seedProducts = [
   {
-    title: "Organic Soyabean (सोयाबीन)",
+    title: "Fresh Red Tomatoes (टोमॅटो)",
+    category: "Vegetables",
+    price: 30,
+    unit: "kg",
+    quantityAvailable: 500,
+    district: "Nashik",
+    phone: "9022554979",
+    image: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500"
+  },
+  {
+    title: "Organic Potatoes (बटाटा)",
+    category: "Vegetables",
+    price: 25,
+    unit: "kg",
+    quantityAvailable: 800,
+    district: "Nanded",
+    phone: "9022554979",
+    image: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=500"
+  },
+  {
+    title: "Fresh Farm Onions (कांदा)",
+    category: "Vegetables",
+    price: 35,
+    unit: "kg",
+    quantityAvailable: 1200,
+    district: "Nashik",
+    phone: "9022554979",
+    image: "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=500"
+  },
+  {
+    title: "Sweet Alphonso Mangoes (हापूस आंबा)",
+    category: "Fruits",
+    price: 650,
+    unit: "Quintal",
+    quantityAvailable: 150,
+    district: "Solapur",
+    phone: "9022554979",
+    image: "https://images.unsplash.com/photo-1553279768-865429fa0078?w=500"
+  },
+  {
+    title: "Fresh Green Bananas (केळी)",
+    category: "Fruits",
+    price: 40,
+    unit: "kg",
+    quantityAvailable: 600,
+    district: "Latur",
+    phone: "9022554979",
+    image: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=500"
+  },
+  {
+    title: "Pomegranate - Bhagwa (डाळिंब)",
+    category: "Fruits",
+    price: 120,
+    unit: "kg",
+    quantityAvailable: 400,
+    district: "Sangli",
+    phone: "9022554979",
+    image: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=500"
+  },
+  {
+    title: "High Yield Soyabean (सोयाबीन)",
     category: "Soyabean",
     price: 4850,
     unit: "Quintal",
-    quantityAvailable: 100,
+    quantityAvailable: 250,
     district: "Nanded",
+    phone: "9022554979",
     image: "https://images.unsplash.com/photo-1599599810694-b5b37304c03d?w=500"
   },
   {
-    title: "Premium Quality Kapus (कापूस)",
+    title: "Premium Kapus (कापूस)",
     category: "Cotton",
     price: 7200,
     unit: "Quintal",
-    quantityAvailable: 50,
+    quantityAvailable: 100,
     district: "Yavatmal",
+    phone: "9022554979",
     image: "https://images.unsplash.com/photo-1606041008023-472dfb5e530f?w=500"
+  },
+  {
+    title: "Pure Halad Powder Grade (हळद)",
+    category: "Halad",
+    price: 13400,
+    unit: "Quintal",
+    quantityAvailable: 80,
+    district: "Sangli",
+    phone: "9022554979",
+    image: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=500"
+  },
+  {
+    title: "Sharbati Wheat (गहू)",
+    category: "Grains",
+    price: 3200,
+    unit: "Quintal",
+    quantityAvailable: 500,
+    district: "Latur",
+    phone: "9022554979",
+    image: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=500"
   }
 ];
 
 async function populateSampleData() {
   try {
     const count = await Product.countDocuments();
-    if (count < 2) {
+    // जर डेटाबेसमध्ये १० पेक्षा कमी आयटम्स असतील तर नवीन सर्व कॅटेगरीचे पिके आपोआप जोडले जातील
+    if (count < 10) {
       await Product.insertMany(seedProducts);
-      console.log('🌾 Sample Agri Products populated successfully!');
+      console.log('🌾 Full marketplace produce seeded successfully!');
     }
   } catch (err) {
     console.log('Sample data insertion skipped:', err.message);
