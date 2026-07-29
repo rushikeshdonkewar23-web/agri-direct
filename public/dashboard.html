@@ -13,10 +13,16 @@
 <body class="bg-stone-50 text-slate-800 min-h-screen flex flex-col justify-between">
 
   <div>
-    <!-- Top Alert / Mandi Ticker -->
-    <div class="bg-emerald-950 text-emerald-300 text-[11px] font-semibold py-2 px-4 text-center border-b border-emerald-800/50 tracking-wide flex items-center justify-center gap-2">
-      <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-      ⚡ Live APMC Mandi Update: Soyabean ₹4,650/Qtl | Cotton ₹7,200/Qtl | Turmeric ₹13,400/Qtl
+    <!-- Top Alert & Weather Ticker Bar -->
+    <div class="bg-emerald-950 text-emerald-300 text-[11px] font-semibold py-2 px-4 border-b border-emerald-800/50 flex flex-wrap justify-between items-center gap-2">
+      <div class="flex items-center gap-2 mx-auto sm:mx-0">
+        <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+        <span>⚡ Live APMC: Soyabean ₹4,650/Qtl | Cotton ₹7,200/Qtl | Turmeric ₹13,400/Qtl</span>
+      </div>
+      <div class="mx-auto sm:mx-0 bg-emerald-900/60 text-emerald-200 px-3 py-0.5 rounded-full border border-emerald-700/50 flex items-center gap-1.5 text-[10px]">
+        <span>🌤️ Today's Weather:</span>
+        <span class="font-bold text-white">29°C, Clear Sky</span>
+      </div>
     </div>
 
     <!-- Premium Navigation Bar -->
@@ -56,7 +62,7 @@
       </div>
     </nav>
 
-    <!-- Hero Banner with Modern Filters -->
+    <!-- Hero Banner with Modern Filters & Voice Search -->
     <div class="relative bg-gradient-to-b from-emerald-950 via-emerald-900 to-emerald-950 text-white overflow-hidden py-12">
       <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&w=1600&q=80" class="absolute inset-0 w-full h-full object-cover opacity-15 mix-blend-overlay">
       
@@ -73,9 +79,15 @@
           </p>
         </div>
         
-        <!-- Multi-Filter Bar -->
+        <!-- Multi-Filter Bar with Voice Input -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-4xl bg-stone-900/40 p-3 rounded-2xl backdrop-blur-md border border-emerald-500/20 shadow-2xl">
-          <input type="text" id="searchInput" oninput="filterProducts()" placeholder="🔍 Search crop (e.g. Tomato, Soyabean)..." class="bg-white text-slate-800 px-4 py-3 rounded-xl text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-400 shadow-inner">
+          
+          <div class="relative flex items-center">
+            <input type="text" id="searchInput" oninput="filterProducts()" placeholder="🔍 Search crop..." class="w-full bg-white text-slate-800 pr-10 pl-4 py-3 rounded-xl text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-400 shadow-inner">
+            <button onclick="startVoiceSearch()" title="Speak to Search" class="absolute right-2 p-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 rounded-lg transition">
+              🎤
+            </button>
+          </div>
           
           <select id="districtFilter" onchange="filterProducts()" class="bg-white text-slate-800 px-4 py-3 rounded-xl text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-400 shadow-inner">
             <option value="">📍 All Districts</option>
@@ -195,21 +207,36 @@
         const farmerPhone = p.phone || '919022554979';
         const waMessage = encodeURIComponent(`Hi, I am interested in buying your crop "${p.title}" listed on Agri-Direct for ₹${p.price}/${p.unit}.`);
         const waLink = `https://wa.me/${farmerPhone}?text=${waMessage}`;
+        
+        // Share Deal Link
+        const shareText = encodeURIComponent(`🌾 Buy Fresh Crop: ${p.title} at ₹${p.price}/${p.unit} directly from farmer in ${p.district || 'Maharashtra'}! Check on Agri-Direct.`);
+        const shareLink = `https://wa.me/?text=${shareText}`;
 
         grid.innerHTML += `
-          <div class="bg-white rounded-3xl p-4 shadow-sm hover:shadow-2xl border border-stone-200/80 transition-all duration-300 flex flex-col justify-between group">
+          <div class="bg-white rounded-3xl p-4 shadow-sm hover:shadow-2xl border border-stone-200/80 transition-all duration-300 flex flex-col justify-between group relative">
             <div>
               <div class="relative overflow-hidden rounded-2xl mb-4">
                 <img src="${imageUrl}" onerror="this.src='https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500'" class="w-full h-48 object-cover group-hover:scale-105 transition duration-500">
                 <span class="absolute top-3 right-3 bg-emerald-950/80 backdrop-blur-md text-emerald-300 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider border border-emerald-700/50">
                   ${p.category || 'Agri'}
                 </span>
+                <span class="absolute top-3 left-3 bg-amber-500/90 text-amber-950 text-[10px] font-black px-2.5 py-0.5 rounded-lg shadow-sm">
+                  ⭐ A+ Grade
+                </span>
               </div>
-              <h3 class="font-extrabold text-slate-800 text-lg group-hover:text-emerald-700 transition leading-snug">${p.title}</h3>
+              
+              <div class="flex justify-between items-start">
+                <h3 class="font-extrabold text-slate-800 text-lg group-hover:text-emerald-700 transition leading-snug">${p.title}</h3>
+                <a href="${shareLink}" target="_blank" title="Share Deal" class="text-xs bg-stone-100 hover:bg-stone-200 p-1.5 rounded-lg text-slate-600 transition">
+                  📲
+                </a>
+              </div>
+
               <div class="flex items-baseline gap-1 mt-2">
                 <span class="text-2xl font-black text-emerald-600">₹${p.price}</span>
                 <span class="text-xs text-slate-400 font-bold">/ ${p.unit}</span>
               </div>
+              
               <div class="mt-4 pt-3 border-t border-stone-100 flex flex-col gap-1.5 text-xs text-slate-500 font-medium">
                 <p>📍 District: <b class="text-slate-800 font-bold">${p.district || 'N/A'}</b></p>
                 <p>📦 Available Stock: <b class="text-slate-800 font-bold">${p.quantityAvailable} ${p.unit}</b></p>
@@ -229,7 +256,26 @@
       });
     }
 
-    // 3. Filtering and Sorting Logic
+    // 3. Voice Search Feature
+    function startVoiceSearch() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("Voice search is not supported in your browser.");
+        return;
+      }
+
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'mr-IN'; // Marathi / Hindi / English recognition
+      recognition.start();
+
+      recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        document.getElementById('searchInput').value = transcript;
+        filterProducts();
+      };
+    }
+
+    // 4. Filtering and Sorting Logic
     function filterProducts() {
       const query = document.getElementById('searchInput').value.toLowerCase();
       const selectedDistrict = document.getElementById('districtFilter').value;
@@ -250,7 +296,7 @@
       renderProducts(filtered);
     }
 
-    // 4. Modal Operations
+    // 5. Modal Operations
     function openOrderModal(id, title) {
       const savedUser = JSON.parse(localStorage.getItem('user') || '{}');
       if (savedUser.name) document.getElementById('buyerName').value = savedUser.name;
@@ -266,7 +312,7 @@
       document.getElementById('checkoutForm').reset();
     }
 
-    // 5. Submit Order (Direct Clean API Call)
+    // 6. Submit Order
     async function submitOrder(e) {
       e.preventDefault();
 
@@ -298,7 +344,7 @@
       }
     }
 
-    // 6. Logout
+    // 7. Logout
     function logout() {
       localStorage.clear();
       window.location.href = 'index.html';
