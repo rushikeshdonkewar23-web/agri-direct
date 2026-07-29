@@ -216,10 +216,11 @@ const seedProducts = [
 async function populateSampleData() {
   try {
     const count = await Product.countDocuments();
-    // जर डेटाबेसमध्ये १० पेक्षा कमी आयटम्स असतील तर नवीन सर्व कॅटेगरीचे पिके आपोआप जोडले जातील
+    // जर १० पेक्षा कमी आयटम्स असतील, तर जुना १ आयटम डिलीट करून नवीन १० आयटम्स ॲड करा
     if (count < 10) {
+      await Product.deleteMany({}); // जुना १ आयटम क्लियर करा
       await Product.insertMany(seedProducts);
-      console.log('🌾 Full marketplace produce seeded successfully!');
+      console.log('🌾 All 10 Fruits & Vegetables Seeded Successfully!');
     }
   } catch (err) {
     console.log('Sample data insertion skipped:', err.message);
