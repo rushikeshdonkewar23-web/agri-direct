@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 
-// Product Model Import (Try-Catch Safe)
 let Product;
 try {
   Product = require('../models/Product');
@@ -13,47 +12,51 @@ try {
   }
 }
 
-// 1. Get All Products (मार्केटप्लेसवर सर्व पिके दाखवण्यासाठी)
+// 1. Get All Products
 router.get('/', async (req, res) => {
   try {
     const products = await Product.find().sort({ createdAt: -1 });
     res.json(products);
   } catch (err) {
-    console.error("Fetch Products Error:", err);
     res.status(500).json({ message: 'Error fetching products', error: err.message });
   }
 });
 
-// 2. Add / Publish New Crop (विना ऑथरायझेशन एरर नवीन पीक थेट सेव्ह करणे)
+// 2. Add Crop (Safe POST Endpoint)
 router.post('/', async (req, res) => {
   try {
     const { title, category, district, price, unit, quantityAvailable, phone, image } = req.body;
 
-    if (!title || !price) {
-      return res.status(400).json({ message: 'कृपया पिकाचे नाव आणि किंमत टाका!' });
+    // जर इमेज डेटा उपलब्ध नसेल तर डिफॉल्ट इमेज
+    let finalImage = image;
+    if (!finalImage || finalImage.length < 10) {
+      finalImage = 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500';
     }
 
     const newProduct = new Product({
-      title,
-      category: category || 'General',
+      title: title || 'Fresh Crop',
+      category: category || 'Vegetables',
       district: district || 'Maharashtra',
-      price: Number(price),
+      price: Number(price) || 0,
       unit: unit || 'kg',
       quantityAvailable: Number(quantityAvailable) || 1,
-      phone: phone || '',
-      image: image || 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500'
+      phone: phone || '9022554979',
+      image: finalImage
     });
 
     await newProduct.save();
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: '🎉 Crop published successfully!',
       product: newProduct
     });
   } catch (err) {
     console.error("Add Product Error:", err);
-    res.status(500).json({ message: 'Failed to publish crop', error: err.message });
+    return res.status(500).json({ 
+      message: 'Failed to publish crop', 
+      error: err.message 
+    });
   }
 });
 
