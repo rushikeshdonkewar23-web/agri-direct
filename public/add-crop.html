@@ -16,7 +16,7 @@
       <a href="dashboard.html" class="flex items-center gap-2 font-extrabold text-lg text-emerald-100">
         🌱 Agri-Direct
       </a>
-      <a href="dashboard.html" class="bg-emerald-800 hover:bg-emerald-700 text-xs font-semibold px-3 py-2 rounded-xl transition">
+      <a href="dashboard.html" class="bg-emerald-800 hover:bg-emerald-700 text-xs font-semibold px-3.5 py-2 rounded-xl transition">
         ← Back to Marketplace
       </a>
     </div>
@@ -29,24 +29,24 @@
 
       <form id="addCropForm" onsubmit="handleAddCrop(event)" class="space-y-4">
         
-        <!-- Direct Image Upload Input with Live Preview -->
+        <!-- Direct Image Upload Input with Auto Compression -->
         <div>
           <label class="block text-xs font-bold text-slate-600 mb-1">Crop Photo / पिकाचा फोटो</label>
           <div class="border-2 border-dashed border-stone-300 rounded-2xl p-4 text-center hover:border-emerald-500 transition bg-stone-50 relative">
-            <input type="file" id="imageInput" accept="image/*" onchange="previewImage(event)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+            <input type="file" id="imageInput" accept="image/*" onchange="compressAndPreviewImage(event)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
             <div id="uploadPlaceholder" class="space-y-1">
               <span class="text-3xl">📸</span>
               <p class="text-xs font-bold text-slate-700">Click to upload photo / फोटो निवडा</p>
-              <p class="text-[10px] text-slate-400">PNG, JPG or JPEG allowed</p>
+              <p class="text-[10px] text-slate-400">PNG, JPG or JPEG</p>
             </div>
-            <!-- Image Preview Area -->
+            <!-- Image Preview -->
             <img id="imagePreview" class="hidden w-full h-48 object-cover rounded-xl shadow-sm border border-stone-200 mx-auto">
           </div>
         </div>
 
         <div>
           <label class="block text-xs font-bold text-slate-600 mb-1">Crop Title / पिकाचे नाव</label>
-          <input type="text" id="title" required placeholder="e.g. Fresh Red Tomato" class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none font-medium">
+          <input type="text" id="title" required placeholder="e.g. Potato / बटाटा" class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none font-medium">
         </div>
 
         <div class="grid grid-cols-2 gap-3">
@@ -77,7 +77,7 @@
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Price / दर (₹)</label>
-            <input type="number" id="price" required placeholder="e.g. 50" class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none font-medium">
+            <input type="number" id="price" required placeholder="e.g. 30" class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none font-medium">
           </div>
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Unit / एकक</label>
@@ -92,7 +92,7 @@
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Stock Quantity</label>
-            <input type="number" id="quantityAvailable" required placeholder="e.g. 500" class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none font-medium">
+            <input type="number" id="quantityAvailable" required placeholder="e.g. 400" class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none font-medium">
           </div>
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Contact Phone</label>
@@ -108,29 +108,50 @@
   </main>
 
   <script>
-    let base64Image = '';
+    let compressedBase64Image = '';
 
-    // Auto-fill logged-in phone
+    // Auto Fill User Phone
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     if (user.phone) document.getElementById('phone').value = user.phone;
 
-    // Image Preview and Base64 Conversion
-    function previewImage(event) {
+    // Image Resize and Compression Function
+    function compressAndPreviewImage(event) {
       const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          base64Image = e.target.result; // Direct Base64 String
-          
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const img = new Image();
+        img.onload = function () {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+
+          // Resize max dimensions (Max width 800px)
+          const MAX_WIDTH = 800;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > MAX_WIDTH) {
+            height = Math.round((height * MAX_WIDTH) / width);
+            width = MAX_WIDTH;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Quality 0.7 (Lightweight JPEG)
+          compressedBase64Image = canvas.toDataURL('image/jpeg', 0.7);
+
           const preview = document.getElementById('imagePreview');
           const placeholder = document.getElementById('uploadPlaceholder');
-          
-          preview.src = base64Image;
+          preview.src = compressedBase64Image;
           preview.classList.remove('hidden');
           placeholder.classList.add('hidden');
         };
-        reader.readAsDataURL(file);
-      }
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
     }
 
     async function handleAddCrop(e) {
@@ -140,8 +161,6 @@
       submitBtn.disabled = true;
       submitBtn.innerText = 'Publishing...';
 
-      const token = localStorage.getItem('token');
-
       const cropData = {
         title: document.getElementById('title').value,
         category: document.getElementById('category').value,
@@ -150,21 +169,20 @@
         unit: document.getElementById('unit').value,
         quantityAvailable: Number(document.getElementById('quantityAvailable').value),
         phone: document.getElementById('phone').value,
-        image: base64Image || 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500' // fallback
+        image: compressedBase64Image || 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500'
       };
 
       try {
         const res = await fetch('/api/products', {
           method: 'POST',
           headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify(cropData)
         });
 
         if (res.ok) {
-          alert('🎉 Crop added successfully!');
+          alert('🎉 Crop published successfully!');
           window.location.href = 'dashboard.html';
         } else {
           const err = await res.json();
@@ -172,7 +190,7 @@
         }
       } catch (err) {
         console.error(err);
-        alert('Server Error while adding crop');
+        alert('Server Error during publishing');
       } finally {
         submitBtn.disabled = false;
         submitBtn.innerText = 'Publish Crop Listing 🚀';
