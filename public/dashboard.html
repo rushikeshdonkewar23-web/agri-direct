@@ -293,7 +293,6 @@
     function selectCategory(catName) {
       activeCategory = catName;
       
-      // Update Button Styles
       document.querySelectorAll('.category-btn').forEach(btn => {
         btn.className = "category-btn bg-white hover:bg-stone-100 text-slate-700 font-bold px-5 py-2.5 rounded-2xl text-xs whitespace-nowrap shadow-sm border border-stone-200 transition flex items-center gap-1.5";
       });
@@ -326,16 +325,21 @@
       };
     }
 
-    // 5. Multi-Filtering Logic (Search + District + Category + Price)
+    // 5. Robust Multi-Filtering Logic (Search + District + Flexible Category + Price)
     function filterProducts() {
-      const query = document.getElementById('searchInput').value.toLowerCase();
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
       const selectedDistrict = document.getElementById('districtFilter').value;
       const sortOrder = document.getElementById('priceSort').value;
 
       let filtered = allProducts.filter(p => {
         const matchesName = p.title.toLowerCase().includes(query) || (p.category && p.category.toLowerCase().includes(query));
         const matchesDistrict = selectedDistrict === "" || p.district === selectedDistrict;
-        const matchesCategory = activeCategory === "" || (p.category && p.category.toLowerCase() === activeCategory.toLowerCase());
+        
+        // Flexible Category Match
+        const matchesCategory = activeCategory === "" || 
+          (p.category && p.category.toLowerCase().includes(activeCategory.toLowerCase())) ||
+          (p.title && p.title.toLowerCase().includes(activeCategory.toLowerCase()));
+          
         return matchesName && matchesDistrict && matchesCategory;
       });
 

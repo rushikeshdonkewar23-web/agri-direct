@@ -9,15 +9,15 @@ connectDB();
 
 const app = express();
 
-// Middlewares (50MB Limit Image Upload साठी अत्यंत आवश्यक आहे)
+// Middlewares (50MB Limit for Base64 Image Uploads)
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Static Files Serve करणे
+// Serve Static Files from Public Folder
 app.use(express.static('public'));
 
-// Model Imports (Try-Catch Safe)
+// Safe Model Imports
 let User;
 try {
   User = require('./models/User');
@@ -216,11 +216,10 @@ const seedProducts = [
 async function populateSampleData() {
   try {
     const count = await Product.countDocuments();
-    // जर १० पेक्षा कमी आयटम्स असतील, तर जुना १ आयटम डिलीट करून नवीन १० आयटम्स ॲड करा
     if (count < 10) {
-      await Product.deleteMany({}); // जुना १ आयटम क्लियर करा
+      await Product.deleteMany({}); // Reset data once to load all 10 items
       await Product.insertMany(seedProducts);
-      console.log('🌾 All 10 Fruits & Vegetables Seeded Successfully!');
+      console.log('🌾 All 10 Marketplace Products Populated Successfully!');
     }
   } catch (err) {
     console.log('Sample data insertion skipped:', err.message);
