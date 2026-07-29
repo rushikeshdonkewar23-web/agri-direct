@@ -1,42 +1,15 @@
 const mongoose = require('mongoose');
 
-const productSchema = new mongoose.Schema(
-  {
-    farmer: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: 'User',
-    },
-    title: {
-      type: String,
-      required: [true, 'Product title is required'],
-    },
-    category: {
-      type: String,
-      required: [true, 'Category is required'], // e.g. Vegetables, Fruits, Grains
-    },
-    price: {
-      type: Number,
-      required: [true, 'Price per unit is required'],
-    },
-    unit: {
-      type: String,
-      required: [true, 'Unit is required'], // e.g. kg, ton, quintal
-    },
-    quantityAvailable: {
-      type: Number,
-      required: [true, 'Quantity is required'],
-    },
-    district: {
-      type: String,
-      required: [true, 'District is required'],
-    },
-    image: {
-      type: String,
-      default: 'https://via.placeholder.com/150',
-    },
-  },
-  { timestamps: true }
-);
+const productSchema = new mongoose.Schema({
+  title: { type: String, default: 'Crop' },
+  category: { type: String, default: 'Vegetables' },
+  price: { type: Number, default: 0 },
+  unit: { type: String, default: 'kg' },
+  quantityAvailable: { type: Number, default: 1 },
+  district: { type: String, default: 'Maharashtra' },
+  phone: { type: String, default: '9022554979' },
+  image: { type: String, default: '' },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false }
+}, { timestamps: true });
 
 module.exports = mongoose.model('Product', productSchema);

@@ -12,7 +12,7 @@ try {
   }
 }
 
-// 1. Get All Products
+// Get All Products
 router.get('/', async (req, res) => {
   try {
     const products = await Product.find().sort({ createdAt: -1 });
@@ -22,26 +22,20 @@ router.get('/', async (req, res) => {
   }
 });
 
-// 2. Add Crop (Safe POST Endpoint)
+// Add Crop Endpoint (Safe from 500 Internal Server Error)
 router.post('/', async (req, res) => {
   try {
-    const { title, category, district, price, unit, quantityAvailable, phone, image } = req.body;
-
-    // जर इमेज डेटा उपलब्ध नसेल तर डिफॉल्ट इमेज
-    let finalImage = image;
-    if (!finalImage || finalImage.length < 10) {
-      finalImage = 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500';
-    }
+    const body = req.body || {};
 
     const newProduct = new Product({
-      title: title || 'Fresh Crop',
-      category: category || 'Vegetables',
-      district: district || 'Maharashtra',
-      price: Number(price) || 0,
-      unit: unit || 'kg',
-      quantityAvailable: Number(quantityAvailable) || 1,
-      phone: phone || '9022554979',
-      image: finalImage
+      title: body.title || 'Fresh Crop',
+      category: body.category || 'Vegetables',
+      district: body.district || 'Nanded',
+      price: Number(body.price) || 0,
+      unit: body.unit || 'kg',
+      quantityAvailable: Number(body.quantityAvailable || body.stock || 100),
+      phone: body.phone || '9022554979',
+      image: body.image || 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500'
     });
 
     await newProduct.save();
@@ -52,7 +46,7 @@ router.post('/', async (req, res) => {
       product: newProduct
     });
   } catch (err) {
-    console.error("Add Product Error:", err);
+    console.error("500 Server Error Details:", err.message);
     return res.status(500).json({ 
       message: 'Failed to publish crop', 
       error: err.message 
