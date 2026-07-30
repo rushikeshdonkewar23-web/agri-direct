@@ -19,21 +19,21 @@
       <p class="text-slate-500 text-xs mt-1">Directly Connecting Farmers & Buyers</p>
     </div>
 
-    <!-- Step 1: Mobile Number & Gmail Form -->
-    <div id="phoneStep" class="space-y-4">
+    <!-- Direct Login Form (OTP विरहित) -->
+    <form onsubmit="handleDirectLogin(event)" class="space-y-4">
       <div>
         <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Mobile Number / मोबाईल नंबर</label>
         <div class="flex gap-2">
-          <span class="bg-slate-100 text-slate-600 font-bold px-3 py-2.5 rounded-xl border border-slate-300 text-sm flex items-center">
+          <span class="bg-slate-100 text-slate-600 font-bold px-3 py-2.5 rounded-xl border border-slate-300 text-sm flex items-center shrink-0">
             🇮🇳 +91
           </span>
-          <input type="tel" id="mobileInput" placeholder="Enter 10-digit mobile number" maxlength="10" class="w-full p-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none font-semibold text-slate-800 text-sm">
+          <input type="tel" id="mobileInput" placeholder="Enter 10-digit mobile number" maxlength="10" pattern="[0-9]{10}" required class="w-full p-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none font-semibold text-slate-800 text-sm">
         </div>
       </div>
 
       <div>
         <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Your Full Name / पूर्ण नाव</label>
-        <input type="text" id="nameInput" placeholder="Enter your full name" class="w-full p-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm font-semibold">
+        <input type="text" id="nameInput" placeholder="Enter your full name" required class="w-full p-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm font-semibold">
       </div>
 
       <div>
@@ -41,49 +41,28 @@
         <input type="email" id="emailInput" placeholder="example@gmail.com" class="w-full p-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm font-semibold">
       </div>
 
-      <button onclick="sendOTP()" id="sendOtpBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition shadow-md text-sm mt-2">
-        Get OTP / ओ.टी.पी मिळवा 📲
+      <button type="submit" id="loginBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold py-3.5 rounded-xl transition shadow-md text-sm mt-2 flex items-center justify-center gap-2">
+        Login / लॉगिन करा 🚀
       </button>
-    </div>
-
-    <!-- Step 2: OTP Verification Form -->
-    <div id="otpStep" class="hidden space-y-4">
-      <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-xl text-center">
-        <p class="text-xs text-emerald-800">
-          OTP sent to <b id="displayPhone" class="font-bold">+91 XXXXXXXX</b>
-        </p>
-        <p class="text-[10px] text-emerald-600 font-semibold mt-0.5">Test OTP is: <span class="bg-emerald-200 px-1.5 py-0.5 rounded font-mono font-extrabold text-emerald-900">1234</span></p>
-      </div>
-
-      <div>
-        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Enter 4-Digit OTP</label>
-        <input type="text" id="otpInput" maxlength="4" placeholder="1234" class="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none font-bold text-slate-800 text-center text-xl tracking-widest">
-      </div>
-
-      <button onclick="verifyOTP()" id="verifyOtpBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition shadow-md text-sm">
-        Verify & Login / लॉगिन करा 🚀
-      </button>
-
-      <button onclick="backToPhone()" class="w-full text-xs font-bold text-slate-500 hover:text-slate-700 text-center block pt-1">
-        ← Change Details
-      </button>
-    </div>
+    </form>
 
   </div>
 
   <script>
-    // जर टोकन आधीच असेल तर डॅशबोर्डवर रिडायरेक्ट करा
+    // जर युझर आधीच लॉगिन असेल तर थेट डॅशबोर्डवर पाठवा
     if (localStorage.getItem('token')) {
       window.location.href = 'dashboard.html';
     }
 
-    function sendOTP() {
-      const phone = document.getElementById('mobileInput').value;
-      const name = document.getElementById('nameInput').value;
-      const email = document.getElementById('emailInput').value;
+    async function handleDirectLogin(e) {
+      e.preventDefault();
+
+      const phone = document.getElementById('mobileInput').value.trim();
+      const name = document.getElementById('nameInput').value.trim();
+      const email = document.getElementById('emailInput').value.trim();
 
       if (!phone || phone.length !== 10) {
-        alert('कृपया १० अंकी मोबाईल नंबर टाका!');
+        alert('कृपया १० अंकी वैध मोबाईल नंबर टाका!');
         return;
       }
 
@@ -92,61 +71,46 @@
         return;
       }
 
-      if (!email) {
-        alert('कृपया तुमचा ईमेल आयडी टाका!');
-        return;
-      }
+      try {
+        // 1. बॅकएंड API कॉल (जर बॅकएंड चालू असेल तर)
+        const res = await fetch('/api/auth/mobile-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, phone, email })
+        });
 
-      document.getElementById('displayPhone').innerText = `+91 ${phone}`;
-      document.getElementById('phoneStep').classList.add('hidden');
-      document.getElementById('otpStep').classList.remove('hidden');
-    }
+        const data = await res.json();
 
-    function backToPhone() {
-      document.getElementById('otpStep').classList.add('hidden');
-      document.getElementById('phoneStep').classList.remove('hidden');
-    }
-
-    async function verifyOTP() {
-      const otp = document.getElementById('otpInput').value;
-      const phone = document.getElementById('mobileInput').value;
-      const name = document.getElementById('nameInput').value;
-      const email = document.getElementById('emailInput').value;
-
-      if (otp === '1234' || otp.length === 4) {
-        
-        try {
-          // 1. बॅकएंडला युझरचा डेटा पाठवून रियल JWT टोकन मिळवणे
-          const res = await fetch('/api/auth/mobile-login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, phone, email })
-          });
-
-          const data = await res.json();
-
-          if (res.ok && data.token) {
-            // बॅकएंड कडून आलेले टोकन सेव्ह करा
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('user', JSON.stringify(data.user));
-          } else {
-            // बॅकएंड ऑनलाईन नसला तरी काम चालण्यासाठी फॉलबॅक टोकन सेव्ह करा
-            const dummyUser = { id: 'user_' + phone, name, phone, email, role: 'FARMER' };
-            localStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dummy_token_' + Date.now());
-            localStorage.setItem('user', JSON.stringify(dummyUser));
-          }
-        } catch (err) {
-          // नेटवर्क एरर आल्यास फॉलबॅक लोकल टोकन सेव्ह करा
-          const dummyUser = { id: 'user_' + phone, name, phone, email, role: 'FARMER' };
-          localStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dummy_token_' + Date.now());
-          localStorage.setItem('user', JSON.stringify(dummyUser));
+        if (res.ok && data.token) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+        } else {
+          // बॅकएंड उपलब्ध नसल्यास फॉलबॅक (Offline/Demo support)
+          saveFallbackUser(phone, name, email);
         }
-
-        alert('🎉 Mobile Login Successful!');
-        window.location.href = 'dashboard.html';
-      } else {
-        alert('गलत OTP! कृपया 1234 टाका.');
+      } catch (err) {
+        // नेटवर्क एरर आल्यास फॉलबॅक लोकल टोकन आणि डेटा सेव्ह करा
+        saveFallbackUser(phone, name, email);
       }
+
+      alert('🎉 Login Successful!');
+      window.location.href = 'dashboard.html';
+    }
+
+    function saveFallbackUser(phone, name, email) {
+      const existingUser = JSON.parse(localStorage.getItem('user') || '{}');
+      const dummyUser = { 
+        id: 'user_' + phone, 
+        name: name, 
+        phone: phone, 
+        email: email, 
+        role: 'FARMER',
+        ...existingUser // जुना इतर प्रोफाईल डेटा असल्यास टिकवून ठेवण्यासाठी
+      };
+      
+      localStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dummy_token_' + Date.now());
+      localStorage.setItem('user', JSON.stringify(dummyUser));
     }
   </script>
 </body>
+</html>
