@@ -242,3 +242,24 @@ app.delete('/api/crops/:id', async (req, res) => {
         res.status(500).json({ message: "Error deleting crop", error });
     }
 });
+
+// DELETE API Endpoint for Products
+app.delete('/api/products/:id', async (req, res) => {
+    try {
+        const productId = req.params.id;
+        
+        // जर तुम्ही MongoDB (Mongoose) वापरत असाल:
+        const deletedProduct = await Product.findByIdAndDelete(productId); 
+        
+        // (टीप: जर तुमच्या Schema/Model चे नाव 'Crop' असेल तर Product ऐवजी Crop.findByIdAndDelete(productId) वापरा)
+
+        if (!deletedProduct) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        res.status(200).json({ message: "Product deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting product:", error);
+        res.status(500).json({ message: "Internal Server Error", error: error.message });
+    }
+});
