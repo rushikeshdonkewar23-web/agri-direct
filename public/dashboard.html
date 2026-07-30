@@ -284,12 +284,40 @@
                 🛒 Buy Crop
               </button>
             </div>
+
+            <!-- 🗑️ नवीन जोडलेले DELETE बटनाचा पर्याय -->
+            <button onclick="deleteProduct('${p._id}')" class="w-full mt-2 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-extrabold py-2 rounded-xl text-xs transition flex items-center justify-center gap-1">
+              🗑️ Delete Crop
+            </button>
           </div>
         `;
       });
     }
 
-    // 3. Category Filter Selection
+    // 3. Delete Product Logic
+    async function deleteProduct(productId) {
+      if (confirm("तुम्हाला नक्की हे पीक डिलीट करायचे आहे का?")) {
+        try {
+          const res = await fetch(`/api/products/${productId}`, {
+            method: 'DELETE'
+          });
+
+          const data = await res.json();
+
+          if (res.ok) {
+            alert('🗑️ पीक यशस्वीरीत्या डिलीट झाले!');
+            loadProducts(); // नवीन लिस्ट पुन्हा लोड होईल
+          } else {
+            alert(data.message || 'डिलीट करताना काहीतरी चूक झाली.');
+          }
+        } catch (err) {
+          console.error("Error deleting crop:", err);
+          alert("सर्व्हरशी कनेक्ट करताना एरर आला.");
+        }
+      }
+    }
+
+    // 4. Category Filter Selection
     function selectCategory(catName) {
       activeCategory = catName;
       
@@ -306,7 +334,7 @@
       filterProducts();
     }
 
-    // 4. Voice Search Feature
+    // 5. Voice Search Feature
     function startVoiceSearch() {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition) {
@@ -325,7 +353,7 @@
       };
     }
 
-    // 5. Robust Multi-Filtering Logic (Search + District + Flexible Category + Price)
+    // 6. Robust Multi-Filtering Logic
     function filterProducts() {
       const query = document.getElementById('searchInput').value.toLowerCase().trim();
       const selectedDistrict = document.getElementById('districtFilter').value;
@@ -335,7 +363,6 @@
         const matchesName = p.title.toLowerCase().includes(query) || (p.category && p.category.toLowerCase().includes(query));
         const matchesDistrict = selectedDistrict === "" || p.district === selectedDistrict;
         
-        // Flexible Category Match
         const matchesCategory = activeCategory === "" || 
           (p.category && p.category.toLowerCase().includes(activeCategory.toLowerCase())) ||
           (p.title && p.title.toLowerCase().includes(activeCategory.toLowerCase()));
@@ -352,7 +379,7 @@
       renderProducts(filtered);
     }
 
-    // 6. Modal Operations
+    // 7. Modal Operations
     function openOrderModal(id, title) {
       const savedUser = JSON.parse(localStorage.getItem('user') || '{}');
       if (savedUser.name) document.getElementById('buyerName').value = savedUser.name;
@@ -368,7 +395,7 @@
       document.getElementById('checkoutForm').reset();
     }
 
-    // 7. Submit Order
+    // 8. Submit Order
     async function submitOrder(e) {
       e.preventDefault();
 
@@ -400,7 +427,7 @@
       }
     }
 
-    // 8. Logout
+    // 9. Logout
     function logout() {
       localStorage.clear();
       window.location.href = 'index.html';

@@ -232,3 +232,13 @@ app.listen(PORT, () => {
   console.log(`Server started on http://localhost:${PORT}`);
   populateSampleData();
 });
+
+app.delete('/api/crops/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        await Crop.findByIdAndDelete(id); // तुमच्या Crop Model चे नाव इथे वापरा
+        res.status(200).json({ message: "Crop deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Error deleting crop", error });
+    }
+});
