@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken');
 const connectDB = require('./config/db');
 
 dotenv.config();
+
+// Connect Database
 connectDB();
 
 const app = express();
@@ -100,23 +102,31 @@ app.delete('/api/admin/users/:id', async (req, res) => {
   }
 });
 
-app.delete('/api/admin/products/:id', async (req, res) => {
+// Clean Single Delete Product Endpoint
+app.delete('/api/products/:id', async (req, res) => {
   try {
-    await Product.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Product deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ message: 'Error deleting product', error: err.message });
+    const productId = req.params.id;
+    const deletedProduct = await Product.findByIdAndDelete(productId); 
+
+    if (!deletedProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.status(200).json({ message: "Product deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
 });
 
-// ================= EXTENDED SEED DATA FOR FULL MARKETPLACE =================
+// ================= SAMPLE SEED DATA =================
 const seedProducts = [
   {
     title: "Fresh Red Tomatoes (टोमॅटो)",
     category: "Vegetables",
     price: 30,
     unit: "kg",
-    quantityAvailable: 500,
+    quantityAvailable: "500",
     district: "Nashik",
     phone: "9022554979",
     image: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500"
@@ -126,7 +136,7 @@ const seedProducts = [
     category: "Vegetables",
     price: 25,
     unit: "kg",
-    quantityAvailable: 800,
+    quantityAvailable: "800",
     district: "Nanded",
     phone: "9022554979",
     image: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=500"
@@ -136,7 +146,7 @@ const seedProducts = [
     category: "Vegetables",
     price: 35,
     unit: "kg",
-    quantityAvailable: 1200,
+    quantityAvailable: "1200",
     district: "Nashik",
     phone: "9022554979",
     image: "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=500"
@@ -146,7 +156,7 @@ const seedProducts = [
     category: "Fruits",
     price: 650,
     unit: "Quintal",
-    quantityAvailable: 150,
+    quantityAvailable: "150",
     district: "Solapur",
     phone: "9022554979",
     image: "https://images.unsplash.com/photo-1553279768-865429fa0078?w=500"
@@ -156,70 +166,30 @@ const seedProducts = [
     category: "Fruits",
     price: 40,
     unit: "kg",
-    quantityAvailable: 600,
+    quantityAvailable: "600",
     district: "Latur",
     phone: "9022554979",
     image: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=500"
-  },
-  {
-    title: "Pomegranate - Bhagwa (डाळिंब)",
-    category: "Fruits",
-    price: 120,
-    unit: "kg",
-    quantityAvailable: 400,
-    district: "Sangli",
-    phone: "9022554979",
-    image: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=500"
   },
   {
     title: "High Yield Soyabean (सोयाबीन)",
     category: "Soyabean",
     price: 4850,
     unit: "Quintal",
-    quantityAvailable: 250,
+    quantityAvailable: "250",
     district: "Nanded",
     phone: "9022554979",
     image: "https://images.unsplash.com/photo-1599599810694-b5b37304c03d?w=500"
-  },
-  {
-    title: "Premium Kapus (कापूस)",
-    category: "Cotton",
-    price: 7200,
-    unit: "Quintal",
-    quantityAvailable: 100,
-    district: "Yavatmal",
-    phone: "9022554979",
-    image: "https://images.unsplash.com/photo-1606041008023-472dfb5e530f?w=500"
-  },
-  {
-    title: "Pure Halad Powder Grade (हळद)",
-    category: "Halad",
-    price: 13400,
-    unit: "Quintal",
-    quantityAvailable: 80,
-    district: "Sangli",
-    phone: "9022554979",
-    image: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=500"
-  },
-  {
-    title: "Sharbati Wheat (गहू)",
-    category: "Grains",
-    price: 3200,
-    unit: "Quintal",
-    quantityAvailable: 500,
-    district: "Latur",
-    phone: "9022554979",
-    image: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=500"
   }
 ];
 
+// जर डेटाबेस पूर्णपणे रिकामा असेल (0 items), तरच एकदाच सॅम्पल डेटा लोड होईल
 async function populateSampleData() {
   try {
     const count = await Product.countDocuments();
-    if (count < 10) {
-      await Product.deleteMany({}); // Reset data once to load all 10 items
+    if (count === 0) {
       await Product.insertMany(seedProducts);
-      console.log('🌾 All 10 Marketplace Products Populated Successfully!');
+      console.log('🌾 Initial Sample Products Populated Successfully!');
     }
   } catch (err) {
     console.log('Sample data insertion skipped:', err.message);
@@ -231,35 +201,4 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server started on http://localhost:${PORT}`);
   populateSampleData();
-});
-
-app.delete('/api/crops/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        await Crop.findByIdAndDelete(id); // तुमच्या Crop Model चे नाव इथे वापरा
-        res.status(200).json({ message: "Crop deleted successfully" });
-    } catch (error) {
-        res.status(500).json({ message: "Error deleting crop", error });
-    }
-});
-
-// DELETE API Endpoint for Products
-app.delete('/api/products/:id', async (req, res) => {
-    try {
-        const productId = req.params.id;
-        
-        // जर तुम्ही MongoDB (Mongoose) वापरत असाल:
-        const deletedProduct = await Product.findByIdAndDelete(productId); 
-        
-        // (टीप: जर तुमच्या Schema/Model चे नाव 'Crop' असेल तर Product ऐवजी Crop.findByIdAndDelete(productId) वापरा)
-
-        if (!deletedProduct) {
-            return res.status(404).json({ message: "Product not found" });
-        }
-
-        res.status(200).json({ message: "Product deleted successfully" });
-    } catch (error) {
-        console.error("Error deleting product:", error);
-        res.status(500).json({ message: "Internal Server Error", error: error.message });
-    }
 });
