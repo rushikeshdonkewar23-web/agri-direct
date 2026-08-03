@@ -207,14 +207,19 @@
     let allProducts = [];
     let activeCategory = '';
 
-    // 1. Load Products API
+    // 1. Load Products API (सुरक्षित API कॉल आणि फॉलबॅक)
     async function loadProducts() {
       try {
         const res = await fetch('/api/products');
-        allProducts = await res.json();
+        const data = await res.json();
+        
+        // डेटा सुरक्षितपणे Array आहे का तपासणे
+        allProducts = Array.isArray(data) ? data : (data.products || []);
         renderProducts(allProducts);
       } catch (err) {
         console.error("Error fetching products:", err);
+        allProducts = [];
+        renderProducts([]);
       }
     }
 
@@ -225,13 +230,14 @@
       
       grid.innerHTML = '';
       
-      if(!products || products.length === 0) {
-        countBadge.innerText = `0 Crops Available`;
+      // पिकांची अचूक संख्या मिळवणे (undefined टाळण्यासाठी)
+      const count = (products && Array.isArray(products)) ? products.length : 0;
+      countBadge.innerText = `${count} Crops Available`;
+
+      if (count === 0) {
         grid.innerHTML = `<p class="col-span-full text-slate-500 text-center py-16 font-bold text-base">No crops match your selected category or search.</p>`;
         return;
       }
-
-      countBadge.innerText = `${products.length} Crops Available`;
 
       products.forEach(p => {
         const imageUrl = (p.image && p.image.length > 20) 
@@ -239,10 +245,10 @@
           : 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500';
 
         const farmerPhone = p.phone || '919022554979';
-        const waMessage = encodeURIComponent(`Hi, I am interested in buying your crop "${p.title}" listed on Agri-Direct for ₹${p.price}/${p.unit}.`);
+        const waMessage = encodeURIComponent(`Hi, I am interested in buying your crop "${p.title}" listed on Agri-Direct for ₹${p.price}/${p.unit || 'Unit'}.`);
         const waLink = `https://wa.me/${farmerPhone}?text=${waMessage}`;
         
-        const shareText = encodeURIComponent(`🌾 Buy Fresh Crop: ${p.title} at ₹${p.price}/${p.unit} directly from farmer in ${p.district || 'Maharashtra'}! Check on Agri-Direct.`);
+        const shareText = encodeURIComponent(`🌾 Buy Fresh Crop: ${p.title} at ₹${p.price}/${p.unit || 'Unit'} directly from farmer in ${p.district || 'Maharashtra'}! Check on Agri-Direct.`);
         const shareLink = `https://wa.me/?text=${shareText}`;
 
         grid.innerHTML += `
@@ -267,12 +273,12 @@
 
               <div class="flex items-baseline gap-1 mt-2">
                 <span class="text-2xl font-black text-emerald-600">₹${p.price}</span>
-                <span class="text-xs text-slate-400 font-bold">/ ${p.unit}</span>
+                <span class="text-xs text-slate-400 font-bold">/ ${p.unit || 'Unit'}</span>
               </div>
               
               <div class="mt-4 pt-3 border-t border-stone-100 flex flex-col gap-1.5 text-xs text-slate-500 font-medium">
                 <p>📍 District: <b class="text-slate-800 font-bold">${p.district || 'N/A'}</b></p>
-                <p>📦 Available Stock: <b class="text-slate-800 font-bold">${p.quantityAvailable} ${p.unit}</b></p>
+                <p>📦 Available Stock: <b class="text-slate-800 font-bold">${p.quantityAvailable || 0} ${p.unit || ''}</b></p>
               </div>
             </div>
 
@@ -280,12 +286,12 @@
               <a href="${waLink}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs text-center flex items-center justify-center gap-1 shadow-sm transition">
                 💬 WhatsApp
               </a>
-              <button onclick="openOrderModal('${p._id}', '${p.title.replace(/'/g, "\\'")}')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs transition">
+              <button onclick="openOrderModal('${p._id}', '${(p.title || '').replace(/'/g, "\\'")}')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs transition">
                 🛒 Buy Crop
               </button>
             </div>
 
-            <!-- 🗑️ नवीन जोडलेले DELETE बटनाचा पर्याय -->
+            <!-- 🗑️ DELETE Button -->
             <button onclick="deleteProduct('${p._id}')" class="w-full mt-2 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-extrabold py-2 rounded-xl text-xs transition flex items-center justify-center gap-1">
               🗑️ Delete Crop
             </button>
@@ -306,7 +312,7 @@
 
           if (res.ok) {
             alert('🗑️ पीक यशस्वीरीत्या डिलीट झाले!');
-            loadProducts(); // नवीन लिस्ट पुन्हा लोड होईल
+            loadProducts();
           } else {
             alert(data.message || 'डिलीट करताना काहीतरी चूक झाली.');
           }
@@ -359,8 +365,11 @@
       const selectedDistrict = document.getElementById('districtFilter').value;
       const sortOrder = document.getElementById('priceSort').value;
 
-      let filtered = allProducts.filter(p => {
-        const matchesName = p.title.toLowerCase().includes(query) || (p.category && p.category.toLowerCase().includes(query));
+      let filtered = (allProducts || []).filter(p => {
+        const titleMatch = p.title ? p.title.toLowerCase().includes(query) : false;
+        const categoryMatch = p.category ? p.category.toLowerCase().includes(query) : false;
+        const matchesName = titleMatch || categoryMatch;
+        
         const matchesDistrict = selectedDistrict === "" || p.district === selectedDistrict;
         
         const matchesCategory = activeCategory === "" || 
@@ -371,9 +380,9 @@
       });
 
       if (sortOrder === 'low') {
-        filtered.sort((a, b) => a.price - b.price);
+        filtered.sort((a, b) => (a.price || 0) - (b.price || 0));
       } else if (sortOrder === 'high') {
-        filtered.sort((a, b) => b.price - a.price);
+        filtered.sort((a, b) => (b.price || 0) - (a.price || 0));
       }
 
       renderProducts(filtered);
