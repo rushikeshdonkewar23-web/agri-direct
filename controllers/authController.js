@@ -13,18 +13,26 @@ exports.registerUser = async (req, res) => {
   try {
     const { name, email, phone, password, role, district } = req.body;
 
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return res.status(400).json({ message: 'User already exists with this email' });
+    if (!name || !email || !phone || !password) {
+      return res.status(400).json({ message: 'Name, email, phone, and password are required' });
     }
+
+    const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User already exists with this email or phone number' });
+    }
+
+    const userRole = (role && ['FARMER', 'BUYER', 'ADMIN'].includes(role.toUpperCase())) 
+      ? role.toUpperCase() 
+      : 'FARMER';
 
     const user = await User.create({
       name,
       email,
       phone,
       password,
-      role,
-      district,
+      role: userRole,
+      district: district || 'Maharashtra',
     });
 
     if (user) {
@@ -32,6 +40,7 @@ exports.registerUser = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        phone: user.phone,
         role: user.role,
         district: user.district,
         token: generateToken(user._id, user.role),
@@ -45,21 +54,29 @@ exports.registerUser = async (req, res) => {
 // 2. Login User API Logic
 exports.loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, phone, identifier } = req.body;
+    const loginId = (email || phone || identifier || '').trim();
 
-    const user = await User.findOne({ email });
+    if (!loginId || !password) {
+      return res.status(400).json({ message: 'Email/Mobile and password are required' });
+    }
+
+    const user = await User.findOne({
+      $or: [{ email: loginId.toLowerCase() }, { phone: loginId }]
+    });
 
     if (user && (await user.matchPassword(password))) {
       res.json({
         _id: user._id,
         name: user.name,
         email: user.email,
+        phone: user.phone,
         role: user.role,
         district: user.district,
         token: generateToken(user._id, user.role),
       });
     } else {
-      res.status(401).json({ message: 'Invalid email or password' });
+      res.status(401).json({ message: 'Invalid email/mobile or password' });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
