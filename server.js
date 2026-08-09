@@ -54,7 +54,8 @@ app.post('/api/auth/mobile-login', async (req, res) => {
         name: name || 'Farmer_' + phone.slice(-4),
         phone: phone,
         email: email || `${phone}@agridirect.com`,
-        password: 'mobile_login_default_pass'
+        password: 'mobile_login_default_pass',
+        district: req.body.district || 'Maharashtra'
       });
       await user.save();
     }
@@ -103,7 +104,7 @@ app.delete('/api/admin/users/:id', async (req, res) => {
 });
 
 // Clean Single Delete Product Endpoint
-app.delete('/api/products/:id', async (req, res) => {
+app.delete(['/api/products/:id', '/api/admin/products/:id'], async (req, res) => {
   try {
     const productId = req.params.id;
     const deletedProduct = await Product.findByIdAndDelete(productId); 

@@ -1,439 +1,274 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
   <meta charset="UTF-8">
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>My Profile | Agri-Direct</title>
-
+  <title>Agri-Direct | My Crops & Profile</title>
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-
-  <style> body { font-family: 'Plus Jakarta Sans', sans-serif; } </style>
-
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  </style>
 </head>
+<body class="bg-stone-50 text-slate-800 min-h-screen flex flex-col justify-between">
 
-<body class="bg-stone-50 text-slate-800 min-h-screen">
-
-
-
-  <!-- Navigation Bar -->
-
-  <nav class="bg-emerald-900 text-white sticky top-0 z-50 shadow-md">
-
-    <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
-
-      <a href="dashboard.html" class="flex items-center gap-2 font-extrabold text-lg text-emerald-100">
-
-        🌱 Agri-Direct
-
-      </a>
-
-      <a href="dashboard.html" class="bg-emerald-800 hover:bg-emerald-700 text-xs font-semibold px-3.5 py-2 rounded-xl transition">
-
-        ← Back to Marketplace
-
-      </a>
-
+  <div>
+    <!-- Top APMC Weather Ticker Bar -->
+    <div class="bg-emerald-950 text-emerald-300 text-[11px] font-semibold py-2 px-4 border-b border-emerald-800/50 flex flex-wrap justify-between items-center gap-2">
+      <div class="flex items-center gap-2 mx-auto sm:mx-0">
+        <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+        <span>🌾 Farmer My Crops Portal: Direct Agriculture Trading</span>
+      </div>
+      <div class="mx-auto sm:mx-0 bg-emerald-900/60 text-emerald-200 px-3 py-0.5 rounded-full border border-emerald-700/50 flex items-center gap-1.5 text-[10px]">
+        <span>🌤️ Today's Weather:</span>
+        <span class="font-bold text-white">29°C, Clear Sky</span>
+      </div>
     </div>
 
-  </nav>
+    <!-- Navigation Bar Header (Uses navbar.js) -->
+    <header id="app-navbar"></header>
+    <script src="navbar.js"></script>
 
-
-
-  <main class="max-w-3xl mx-auto p-4 sm:p-6 my-6">
-
-   
-
-    <!-- Profile Display Card -->
-
-    <div class="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200 shadow-sm mb-6 relative overflow-hidden">
-
-      <div class="flex flex-col sm:flex-row items-center gap-6">
-
-       
-
-        <!-- Profile Image Display -->
-
-        <div class="relative">
-
-          <img id="displayAvatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200" class="w-24 h-24 rounded-2xl object-cover border-2 border-emerald-500 shadow-md">
-
-          <span class="absolute -bottom-2 -right-2 bg-emerald-600 text-white p-1 rounded-lg text-xs">👨‍🌾</span>
-
-        </div>
-
-
-
-        <div class="text-center sm:text-left flex-1 space-y-1">
-
-          <div class="flex flex-col sm:flex-row sm:items-center gap-2 justify-between">
-
-            <h2 class="text-2xl font-extrabold text-slate-800" id="displayName">Rushikesh Donkewar</h2>
-
-            <button onclick="toggleEditModal()" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-bold px-4 py-2 rounded-xl text-xs transition self-center sm:self-auto">
-
-              ✏️ Edit Profile
-
-            </button>
-
+    <!-- Main Container -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8">
+      
+      <!-- Profile Card Container -->
+      <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs relative overflow-hidden">
+        <div class="flex flex-col sm:flex-row items-center gap-6">
+          
+          <!-- Profile Avatar -->
+          <div class="relative shrink-0">
+            <img id="displayAvatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200" class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover border-2 border-emerald-500 shadow-sm">
+            <span class="absolute -bottom-2 -right-2 bg-emerald-600 text-white p-1 rounded-lg text-xs">👨‍🌾</span>
           </div>
 
-          <p class="text-xs font-semibold text-slate-500" id="displayPhone">Phone: +91 9022554979</p>
-
-          <p class="text-xs text-slate-500" id="displayEmail">Email: Not Added</p>
-
-          <div class="pt-2 flex flex-wrap gap-2 justify-center sm:justify-start">
-
-            <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-md">VERIFIED FARMER</span>
-
-            <span id="displayDistrict" class="bg-stone-100 text-slate-700 text-[10px] font-bold px-2.5 py-1 rounded-md">📍 District: Nanded</span>
-
-            <span id="displayLand" class="bg-stone-100 text-slate-700 text-[10px] font-bold px-2.5 py-1 rounded-md">🌾 Land: 5 Acres</span>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-
-      <!-- Additional Farm Details Section -->
-
-      <div class="mt-6 pt-6 border-t border-stone-100 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-
-        <div class="bg-stone-50 p-3.5 rounded-2xl border border-stone-100">
-
-          <p class="text-slate-400 font-semibold mb-0.5">Address / पत्ता:</p>
-
-          <p class="font-bold text-slate-700" id="displayAddress">Not provided</p>
-
-        </div>
-
-        <div class="bg-stone-50 p-3.5 rounded-2xl border border-stone-100">
-
-          <p class="text-slate-400 font-semibold mb-0.5">Main Crops Grown / मुख्य पिके:</p>
-
-          <p class="font-bold text-slate-700" id="displayCrops">Soyabean, Cotton, Turmeric</p>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-
-  </main>
-
-
-
-  <!-- Edit Profile Modal Popup -->
-
-  <div id="editModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-stone-200 max-h-[90vh] overflow-y-auto">
-
-      <div class="flex justify-between items-center mb-6">
-
-        <h3 class="text-lg font-bold text-slate-800">✏️ Edit Farmer Profile</h3>
-
-        <button onclick="toggleEditModal()" class="text-slate-400 hover:text-slate-600 font-bold text-2xl">&times;</button>
-
-      </div>
-
-
-
-      <form onsubmit="saveProfile(event)" class="space-y-4">
-
-       
-
-        <!-- Image Upload Section -->
-
-        <div>
-
-          <label class="block text-xs font-bold text-slate-600 mb-1">Farmer Photo / शेतकऱ्याचा फोटो</label>
-
-          <div class="border-2 border-dashed border-stone-300 rounded-2xl p-4 text-center hover:border-emerald-500 transition bg-stone-50 relative">
-
-            <input type="file" id="avatarInput" accept="image/*" onchange="previewAvatar(event)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-
-            <div id="uploadPlaceholder" class="space-y-1">
-
-              <span class="text-2xl">📷</span>
-
-              <p class="text-xs font-bold text-slate-700">Click to upload photo / फोटो निवडा</p>
-
+          <div class="text-center sm:text-left flex-1 space-y-1">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-2 justify-between">
+              <h2 class="text-2xl sm:text-3xl font-black text-slate-800" id="displayName">Farmer Profile</h2>
+              <button onclick="toggleEditModal()" type="button" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-bold px-4 py-2 rounded-xl text-xs transition self-center sm:self-auto shadow-2xs">
+                ✏️ Edit Profile
+              </button>
             </div>
 
-            <img id="avatarPreview" class="hidden w-20 h-20 object-cover rounded-2xl shadow-sm border border-stone-200 mx-auto mt-2">
+            <p class="text-xs font-bold text-slate-600" id="displayPhone">Phone: Loading...</p>
+            <p class="text-xs text-slate-500 font-semibold" id="displayEmail">Email: Loading...</p>
 
+            <div class="pt-2 flex flex-wrap gap-2 justify-center sm:justify-start">
+              <span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase border border-emerald-200">VERIFIED FARMER</span>
+              <span id="displayDistrict" class="bg-slate-100 text-slate-700 text-[10px] font-extrabold px-2.5 py-1 rounded-full border border-slate-200">📍 District: Nanded</span>
+              <span id="displayLand" class="bg-slate-100 text-slate-700 text-[10px] font-extrabold px-2.5 py-1 rounded-full border border-slate-200">🌾 Land: 5 Acres</span>
+            </div>
           </div>
 
         </div>
 
-
-
-        <div>
-
-          <label class="block text-xs font-bold text-slate-600 mb-1">Full Name / पूर्ण नाव</label>
-
-          <input type="text" id="editName" required class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none font-medium">
-
-        </div>
-
-
-
-        <div class="grid grid-cols-2 gap-3">
-
-          <div>
-
-            <label class="block text-xs font-bold text-slate-600 mb-1">Phone Number</label>
-
-            <input type="tel" id="editPhone" required class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none font-medium">
-
+        <div class="mt-6 pt-6 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-semibold">
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+            <p class="text-slate-400 font-bold mb-0.5">Address / पत्ता:</p>
+            <p class="font-extrabold text-slate-800" id="displayAddress">Not provided</p>
           </div>
 
-          <div>
-
-            <label class="block text-xs font-bold text-slate-600 mb-1">Email ID</label>
-
-            <input type="email" id="editEmail" placeholder="example@gmail.com" class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none font-medium">
-
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+            <p class="text-slate-400 font-bold mb-0.5">Main Crops Grown / मुख्य पिके:</p>
+            <p class="font-extrabold text-slate-800" id="displayCrops">Soyabean, Cotton, Turmeric</p>
           </div>
+        </div>
+      </div>
 
+      <!-- My Listed Crops Section -->
+      <div class="space-y-4">
+        <div class="flex justify-between items-center border-b border-slate-200/80 pb-3">
+          <h3 class="text-lg sm:text-xl font-black text-slate-800 flex items-center gap-2">
+            <span>🌾</span> <span>My Listed Crops & Produce</span>
+          </h3>
+          <a href="add-crop.html" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs px-3.5 py-2 rounded-xl shadow-xs transition flex items-center gap-1">
+            <span>✨</span> <span>+ Add Crop</span>
+          </a>
         </div>
 
-
-
-        <div class="grid grid-cols-2 gap-3">
-
-          <div>
-
-            <label class="block text-xs font-bold text-slate-600 mb-1">District / जिल्हा</label>
-
-            <select id="editDistrict" class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none font-medium">
-
-              <option value="Nanded">Nanded</option>
-
-              <option value="Nashik">Nashik</option>
-
-              <option value="Yavatmal">Yavatmal</option>
-
-              <option value="Sangli">Sangli</option>
-
-              <option value="Latur">Latur</option>
-
-              <option value="Solapur">Solapur</option>
-
-            </select>
-
-          </div>
-
-          <div>
-
-            <label class="block text-xs font-bold text-slate-600 mb-1">Land Area / शेती (Acres)</label>
-
-            <input type="text" id="editLand" placeholder="e.g. 5 Acres" class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none font-medium">
-
-          </div>
-
+        <div id="myCropsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <p class="text-slate-400 text-xs font-bold py-12 text-center col-span-full">⏳ Loading your listed crops...</p>
         </div>
+      </div>
 
-
-
-        <div>
-
-          <label class="block text-xs font-bold text-slate-600 mb-1">Address / गाव - पत्ता</label>
-
-          <input type="text" id="editAddress" placeholder="e.g. At Post Ardhapur, Nanded" class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none font-medium">
-
-        </div>
-
-
-
-        <div>
-
-          <label class="block text-xs font-bold text-slate-600 mb-1">Main Crops / घेतलेली पिके</label>
-
-          <input type="text" id="editCrops" placeholder="e.g. Soyabean, Cotton, Tomato" class="w-full border border-stone-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none font-medium">
-
-        </div>
-
-
-
-        <div class="flex gap-2 pt-4">
-
-          <button type="button" onclick="toggleEditModal()" class="w-1/2 bg-stone-100 hover:bg-stone-200 text-slate-700 font-bold py-3 rounded-xl text-xs transition">
-
-            Cancel
-
-          </button>
-
-          <button type="submit" class="w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-xs shadow-md transition">
-
-            Save Profile 💾
-
-          </button>
-
-        </div>
-
-      </form>
-
-    </div>
-
+    </main>
   </div>
 
 
+  <!-- Edit Profile Modal Popup -->
+  <div id="editModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+        <h3 class="text-lg font-black text-slate-800">✏️ Edit Profile Details</h3>
+        <button onclick="toggleEditModal()" type="button" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+      </div>
 
+      <form onsubmit="saveProfile(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Full Name / नाव</label>
+          <input type="text" id="editName" required class="w-full border border-slate-300 rounded-xl p-3 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Phone Number / मोबाईल</label>
+          <input type="text" id="editPhone" required class="w-full border border-slate-300 rounded-xl p-3 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Email ID</label>
+          <input type="email" id="editEmail" class="w-full border border-slate-300 rounded-xl p-3 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">District / जिल्हा</label>
+          <input type="text" id="editDistrict" required class="w-full border border-slate-300 rounded-xl p-3 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Land Size / किती क्षेत्र (उदा. 5 Acres)</label>
+          <input type="text" id="editLand" placeholder="e.g. 5 Acres" class="w-full border border-slate-300 rounded-xl p-3 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Address / पत्ता</label>
+          <input type="text" id="editAddress" placeholder="e.g. At Post Umri, Nanded" class="w-full border border-slate-300 rounded-xl p-3 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Main Crops / मुख्य पिके</label>
+          <input type="text" id="editCrops" placeholder="e.g. Soyabean, Cotton, Turmeric" class="w-full border border-slate-300 rounded-xl p-3 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 outline-none">
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+          <button type="button" onclick="toggleEditModal()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl text-xs font-bold text-slate-700 transition">Cancel</button>
+          <button type="submit" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-extrabold shadow-xs transition">Save Profile</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 text-center py-6 text-xs text-slate-500 font-semibold mt-16">
+    Agri-Direct Portal &copy; 2026 | Direct Farmer Connection Network
+  </footer>
+
+
+  <!-- JAVASCRIPT LOGIC -->
   <script>
-
     let base64Avatar = '';
 
-
-
-    // Load Profile Data from LocalStorage
+    document.addEventListener('DOMContentLoaded', () => {
+      loadProfile();
+      loadMyCrops();
+    });
 
     function loadProfile() {
-
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-
-
-
-      if (user.name) document.getElementById('displayName').innerText = user.name;
-
-      if (user.phone) document.getElementById('displayPhone').innerText = `Phone: +91 ${user.phone}`;
-
-      if (user.email) document.getElementById('displayEmail').innerText = `Email: ${user.email}`;
-
-      if (user.district) document.getElementById('displayDistrict').innerText = `📍 District: ${user.district}`;
-
-      if (user.land) document.getElementById('displayLand').innerText = `🌾 Land: ${user.land}`;
-
-      if (user.address) document.getElementById('displayAddress').innerText = user.address;
-
-      if (user.crops) document.getElementById('displayCrops').innerText = user.crops;
-
-      if (user.avatar) document.getElementById('displayAvatar').src = user.avatar;
-
-
-
-      // Fill Modal Inputs
-
-      document.getElementById('editName').value = user.name || '';
-
-      document.getElementById('editPhone').value = user.phone || '';
-
-      document.getElementById('editEmail').value = user.email || '';
-
-      document.getElementById('editDistrict').value = user.district || 'Nanded';
-
-      document.getElementById('editLand').value = user.land || '';
-
-      document.getElementById('editAddress').value = user.address || '';
-
-      document.getElementById('editCrops').value = user.crops || '';
-
-      base64Avatar = user.avatar || '';
-
-    }
-
-
-
-    function toggleEditModal() {
-
-      document.getElementById('editModal').classList.toggle('hidden');
-
-    }
-
-
-
-    // Convert Image File to Base64 String
-
-    function previewAvatar(event) {
-
-      const file = event.target.files[0];
-
-      if (file) {
-
-        const reader = new FileReader();
-
-        reader.onload = function (e) {
-
-          base64Avatar = e.target.result;
-
-          const preview = document.getElementById('avatarPreview');
-
-          preview.src = base64Avatar;
-
-          preview.classList.remove('hidden');
-
-        };
-
-        reader.readAsDataURL(file);
-
+      let user = {};
+      try {
+        user = JSON.parse(localStorage.getItem('user') || localStorage.getItem('userData') || '{}');
+      } catch (e) {
+        user = {};
       }
 
+      document.getElementById('displayName').innerText = user.name || 'Farmer Profile';
+      document.getElementById('displayPhone').innerText = `Phone: ${user.phone || '9022554979'}`;
+      document.getElementById('displayEmail').innerText = `Email: ${user.email || 'Not Added'}`;
+      document.getElementById('displayDistrict').innerText = `📍 District: ${user.district || 'Nanded'}`;
+      if (user.land) document.getElementById('displayLand').innerText = `🌾 Land: ${user.land}`;
+      if (user.address) document.getElementById('displayAddress').innerText = user.address;
+      if (user.crops) document.getElementById('displayCrops').innerText = user.crops;
+      if (user.avatar) document.getElementById('displayAvatar').src = user.avatar;
+
+      document.getElementById('editName').value = user.name || '';
+      document.getElementById('editPhone').value = user.phone || '';
+      document.getElementById('editEmail').value = user.email || '';
+      document.getElementById('editDistrict').value = user.district || 'Nanded';
+      document.getElementById('editLand').value = user.land || '';
+      document.getElementById('editAddress').value = user.address || '';
+      document.getElementById('editCrops').value = user.crops || '';
     }
 
+    function toggleEditModal() {
+      document.getElementById('editModal').classList.toggle('hidden');
+    }
 
+    async function loadMyCrops() {
+      const grid = document.getElementById('myCropsGrid');
+      try {
+        const res = await fetch('/api/products');
+        const data = await res.json();
+        const products = Array.isArray(data) ? data : (data.products || []);
 
-    // Save Profile Details
+        if (!products || products.length === 0) {
+          grid.innerHTML = `<p class="col-span-full text-slate-400 font-bold py-12 text-center">No listed crops found. Click "+ Add Crop" to publish your produce.</p>`;
+          return;
+        }
+
+        grid.innerHTML = '';
+        products.forEach(p => {
+          const imageUrl = (p.image && p.image.length > 20) ? p.image : 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400';
+
+          grid.innerHTML += `
+            <div class="bg-white rounded-3xl p-4 shadow-xs border border-slate-200/80 flex flex-col justify-between group">
+              <div>
+                <img src="${imageUrl}" onerror="this.src='https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400'" class="w-full h-40 object-cover rounded-2xl mb-3">
+                <h4 class="font-extrabold text-slate-800 text-base leading-snug">${p.title}</h4>
+                <p class="text-emerald-600 font-black text-xl mt-1">₹${p.price} <span class="text-xs text-slate-400 font-bold">/ ${p.unit || 'Unit'}</span></p>
+                <p class="text-xs text-slate-500 font-medium mt-2">📍 District: <b>${p.district || 'N/A'}</b></p>
+              </div>
+
+              <button onclick="deleteProduct('${p._id}')" type="button" class="w-full mt-4 h-10 bg-rose-50 hover:bg-rose-100 active:scale-[0.98] text-rose-700 border border-rose-200/80 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition-all focus:ring-2 focus:ring-rose-500 focus:outline-none">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+                <span>Delete Crop</span>
+              </button>
+            </div>
+          `;
+        });
+      } catch (err) {
+        grid.innerHTML = `<p class="col-span-full text-rose-500 font-bold py-8 text-center">Failed to load crops.</p>`;
+      }
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm("Are you sure you want to delete this crop listing?")) return;
+      try {
+        const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          alert('🗑️ Crop deleted successfully!');
+          loadMyCrops();
+        } else {
+          alert('Failed to delete crop');
+        }
+      } catch (err) {
+        alert('Server Error during deletion');
+      }
+    }
 
     function saveProfile(e) {
-
       e.preventDefault();
-
-
-
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-
-
+      let user = {};
+      try {
+        user = JSON.parse(localStorage.getItem('user') || '{}');
+      } catch (err) {}
 
       user.name = document.getElementById('editName').value;
-
       user.phone = document.getElementById('editPhone').value;
-
       user.email = document.getElementById('editEmail').value;
-
       user.district = document.getElementById('editDistrict').value;
-
       user.land = document.getElementById('editLand').value;
-
       user.address = document.getElementById('editAddress').value;
-
       user.crops = document.getElementById('editCrops').value;
 
-      if (base64Avatar) user.avatar = base64Avatar;
-
-
-
       localStorage.setItem('user', JSON.stringify(user));
-
-
-
       alert('🎉 Profile updated successfully!');
-
       toggleEditModal();
-
       loadProfile();
-
     }
-
-
-
-    // Initialize Page
-
-    loadProfile();
-
   </script>
-
 </body>
-
 </html>

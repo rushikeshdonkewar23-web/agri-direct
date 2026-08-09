@@ -3,167 +3,236 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agri-Direct | My Profile</title>
+  <title>Agri-Direct | User Profile</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  </style>
 </head>
-<body class="bg-slate-50 min-h-screen flex flex-col justify-between">
+<body class="bg-stone-50 text-slate-800 min-h-screen flex flex-col justify-between">
 
   <div>
-    <!-- Navbar -->
-    <nav class="bg-emerald-800 text-white p-4 shadow-lg flex justify-between items-center px-6 md:px-12">
-      <h1 class="text-2xl font-bold flex items-center gap-2">
-        <span>🌱</span> Agri-Direct
-      </h1>
-      <div class="flex items-center gap-4">
-        <a href="dashboard.html" class="bg-emerald-700 hover:bg-emerald-600 border border-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition">
-          ← Back to Dashboard
-        </a>
+    <!-- Top APMC Weather Ticker Bar -->
+    <div class="bg-emerald-950 text-emerald-300 text-[11px] font-semibold py-2 px-4 border-b border-emerald-800/50 flex flex-wrap justify-between items-center gap-2">
+      <div class="flex items-center gap-2 mx-auto sm:mx-0">
+        <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+        <span>🌱 Verified User Profile | Direct Farmer & Buyer Connection</span>
       </div>
-    </nav>
+      <div class="mx-auto sm:mx-0 bg-emerald-900/60 text-emerald-200 px-3 py-0.5 rounded-full border border-emerald-700/50 flex items-center gap-1.5 text-[10px]">
+        <span>🌤️ Today's Weather:</span>
+        <span class="font-bold text-white">29°C, Clear Sky</span>
+      </div>
+    </div>
+
+    <!-- Navigation Bar Header (Uses navbar.js) -->
+    <header id="app-navbar"></header>
+    <script src="navbar.js"></script>
 
     <!-- Main Container -->
-    <div class="max-w-6xl mx-auto p-6 md:p-8">
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8">
       
       <!-- User Info Card -->
-      <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-xs border border-slate-200/80 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div class="flex items-center gap-5">
           <!-- Profile Avatar Image -->
-          <div class="relative">
-            <img id="userAvatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150" alt="Avatar" class="w-20 h-20 rounded-2xl object-cover border-2 border-emerald-500 shadow-sm">
+          <div class="relative shrink-0">
+            <img id="userAvatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150" alt="Avatar" class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover border-2 border-emerald-500 shadow-sm">
+            <span class="absolute -bottom-2 -right-2 bg-emerald-600 text-white p-1.5 rounded-xl text-xs shadow-xs">👨‍🌾</span>
           </div>
-          <div>
-            <h2 id="userName" class="text-2xl font-bold text-slate-800">Loading...</h2>
-            <p id="userRole" class="text-xs font-semibold bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full inline-block mt-1"></p>
-            <p id="userEmail" class="text-xs text-slate-500 mt-1"></p>
-            <p id="userPhone" class="text-xs text-slate-600 font-medium mt-1">📞 Phone: Not Added</p>
+          <div class="space-y-1">
+            <h2 id="userName" class="text-2xl sm:text-3xl font-black text-slate-800">Loading...</h2>
+            <div>
+              <span id="userRole" class="inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-200">
+                FARMER ACCOUNT
+              </span>
+            </div>
+            <p id="userEmail" class="text-xs text-slate-500 font-semibold pt-1">📧 Email: Loading...</p>
+            <p id="userPhone" class="text-xs text-slate-600 font-bold">📞 Phone: Loading...</p>
           </div>
         </div>
 
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 text-xs text-slate-600 space-y-2 w-full md:w-auto flex flex-col items-start md:items-end">
-          <p>📍 District: <b id="userDistrict" class="text-slate-800">Nanded</b></p>
-          <p>🏡 Address: <b id="userAddress" class="text-slate-800">Not Added</b></p>
-          <p>🔒 Status: <b class="text-emerald-600">Active Verified</b></p>
-          <!-- Edit Profile Button -->
-          <button onclick="openEditModal()" class="mt-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-xs transition shadow-sm flex items-center gap-1">
-            ✏️ Edit Profile
+        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 text-xs text-slate-600 space-y-2 w-full md:w-auto flex flex-col items-start md:items-end">
+          <p>📍 District: <b id="userDistrict" class="text-slate-800 font-extrabold">Nanded</b></p>
+          <p>🏡 Address: <b id="userAddress" class="text-slate-800 font-extrabold">Not Added</b></p>
+          <p>🔒 Security Status: <b class="text-emerald-700 font-extrabold">Active Verified</b></p>
+          
+          <button onclick="openEditModal()" type="button" class="mt-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-4 py-2 rounded-xl text-xs transition shadow-xs flex items-center gap-1.5 active:scale-95">
+            ✏️ Edit Profile Details
           </button>
         </div>
       </div>
 
       <!-- My Listed Crops Section -->
-      <div class="flex justify-between items-center mb-6 border-b pb-3">
-        <h3 class="text-xl font-bold text-slate-800">My Listed Crops & Produce 🌾</h3>
-        <span id="myProductCount" class="text-xs font-semibold bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full">0 Crops</span>
+      <div class="space-y-4">
+        <div class="flex justify-between items-center border-b border-slate-200/80 pb-3">
+          <h3 class="text-lg sm:text-xl font-black text-slate-800 flex items-center gap-2">
+            <span>🌾</span> <span>My Listed Crops & Produce</span>
+          </h3>
+          <span id="myProductCount" class="text-xs font-black bg-emerald-100 text-emerald-900 px-3.5 py-1.5 rounded-full border border-emerald-200">
+            0 Crops
+          </span>
+        </div>
+
+        <div id="myProductsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <p class="text-slate-400 text-xs font-bold py-12 text-center col-span-full">⏳ Loading your listed crops...</p>
+        </div>
       </div>
 
-      <div id="myProductsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <p class="text-slate-500 col-span-full">Loading your listed crops...</p>
-      </div>
-
-    </div>
+    </main>
   </div>
 
-  <!-- Edit Profile Modal Pop-up (Image + Details) -->
-  <div id="editModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-2xl p-6 shadow-2xl w-full max-w-md border border-slate-100 max-h-[90vh] overflow-y-auto">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-bold text-slate-800">✏️ Edit Profile Details</h3>
-        <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+
+  <!-- Edit Profile Modal Pop-up -->
+  <div id="editModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-2xl w-full max-w-md border border-slate-200 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+        <h3 class="text-lg font-black text-slate-800">✏️ Edit Profile Details</h3>
+        <button onclick="closeEditModal()" type="button" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
       </div>
       
       <form onsubmit="saveProfile(event)" class="space-y-4">
-        <!-- Profile Picture Input -->
         <div>
-          <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Profile Photo (From Gallery)</label>
-          <input type="file" id="editAvatarFile" accept="image/*" class="w-full p-2 border border-slate-300 rounded-lg text-xs file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:bg-emerald-100 file:text-emerald-700 font-semibold hover:file:bg-emerald-200 cursor-pointer">
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Profile Photo (From Gallery)</label>
+          <input type="file" id="editAvatarFile" accept="image/*" class="w-full p-2 border border-slate-300 rounded-xl text-xs file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-emerald-100 file:text-emerald-700 font-semibold cursor-pointer">
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Full Name</label>
-          <input type="text" id="editName" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm" required>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Full Name</label>
+          <input type="text" id="editName" class="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-xs sm:text-sm font-semibold" required>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Phone / Mobile Number</label>
-          <input type="text" id="editPhone" placeholder="e.g. +91 9876543210" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm">
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Phone / Mobile Number</label>
+          <input type="text" id="editPhone" placeholder="e.g. 9022554979" class="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-xs sm:text-sm font-semibold">
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-600 uppercase mb-1">District / Location</label>
-          <input type="text" id="editDistrict" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm" required>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">District / Location</label>
+          <input type="text" id="editDistrict" class="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-xs sm:text-sm font-semibold" required>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Village / Village Address</label>
-          <input type="text" id="editAddress" placeholder="e.g. At Post Umri, Nanded" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-sm">
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Village / Address</label>
+          <input type="text" id="editAddress" placeholder="e.g. At Post Umri, Nanded" class="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-xs sm:text-sm font-semibold">
         </div>
 
-        <div class="flex justify-end gap-2 pt-2">
-          <button type="button" onclick="closeEditModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-lg text-xs font-bold text-slate-700 transition">Cancel</button>
-          <button type="submit" id="saveBtn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition">Save Changes</button>
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeEditModal()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl text-xs font-bold text-slate-700 transition">Cancel</button>
+          <button type="submit" id="saveBtn" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-extrabold shadow-xs transition">Save Changes</button>
         </div>
       </form>
     </div>
   </div>
 
+
   <!-- Footer -->
-  <footer class="bg-slate-900 text-slate-400 py-6 text-center border-t border-slate-800 mt-12">
-    <p class="text-sm font-medium">
-      Designed & Developed with ❤️ by <span class="text-emerald-400 font-bold">Rushikesh Donkewar</span>
-    </p>
-    <p class="text-xs text-slate-500 mt-1">© 2026 Agri-Direct Marketplace • Farmer Profile</p>
+  <footer class="bg-white border-t border-slate-200 text-center py-6 text-xs text-slate-500 font-semibold mt-16">
+    Agri-Direct Portal &copy; 2026 | Direct Farmer Connection Network
   </footer>
 
-  <script>
-    let user = JSON.parse(localStorage.getItem('userData'));
-    const token = localStorage.getItem('userToken');
 
-    if (!token || !user) {
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // Robust Session Fallback
+    let user = {};
+    try {
+      user = JSON.parse(localStorage.getItem('user') || localStorage.getItem('userData') || '{}');
+    } catch (e) {
+      user = {};
+    }
+
+    const token = localStorage.getItem('token') || localStorage.getItem('userToken');
+
+    if (!token && !user.id && !user.name) {
       window.location.href = 'index.html';
     }
 
-    // Helper: Convert File to Base64
-    function compressImage(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (e) => {
-          const img = new Image();
-          img.src = e.target.result;
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const maxWidth = 300;
-            const scale = maxWidth / img.width;
-            canvas.width = maxWidth;
-            canvas.height = img.height * scale;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            resolve(canvas.toDataURL('image/jpeg', 0.8));
-          };
-        };
-      });
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+      renderProfileInfo();
+      loadMyListedCrops();
+    });
 
     function renderProfileInfo() {
-      document.getElementById('userName').innerText = user.name;
-      document.getElementById('userRole').innerText = `${user.role} ACCOUNT`;
-      document.getElementById('userEmail').innerText = `📧 ${user.email}`;
-      document.getElementById('userPhone').innerText = `📞 Phone: ${user.phone || 'Not Added'}`;
+      document.getElementById('userName').innerText = user.name || 'Agri User';
+      document.getElementById('userRole').innerText = `${(user.role || 'FARMER').toUpperCase()} ACCOUNT`;
+      document.getElementById('userEmail').innerText = `📧 Email: ${user.email || 'Not Added'}`;
+      document.getElementById('userPhone').innerText = `📞 Phone: ${user.phone || '9022554979'}`;
       document.getElementById('userDistrict').innerText = user.district || 'Nanded';
-      document.getElementById('userAddress').innerText = user.address || 'Not Added';
+      document.getElementById('userAddress').innerText = user.address || 'Maharashtra';
 
       if (user.avatar) {
         document.getElementById('userAvatar').src = user.avatar;
       }
     }
 
-    renderProfileInfo();
+    // Load User's Listed Crops
+    async function loadMyListedCrops() {
+      const grid = document.getElementById('myProductsGrid');
+      const badge = document.getElementById('myProductCount');
 
-    // Modal Controls
+      try {
+        const res = await fetch('/api/products');
+        const data = await res.json();
+        const products = Array.isArray(data) ? data : (data.products || []);
+
+        badge.innerText = `${products.length} Crops`;
+
+        if (!products || products.length === 0) {
+          grid.innerHTML = `<p class="col-span-full text-slate-400 font-bold py-12 text-center">You have no listed crops yet. Click "+ Add Crop" on the dashboard to post your first listing.</p>`;
+          return;
+        }
+
+        grid.innerHTML = '';
+        products.forEach(p => {
+          const imageUrl = (p.image && p.image.length > 20) ? p.image : 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400';
+
+          grid.innerHTML += `
+            <div class="bg-white rounded-3xl p-4 shadow-xs border border-slate-200/80 flex flex-col justify-between group">
+              <div>
+                <img src="${imageUrl}" onerror="this.src='https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400'" class="w-full h-40 object-cover rounded-2xl mb-3">
+                <h4 class="font-extrabold text-slate-800 text-base leading-snug">${p.title}</h4>
+                <p class="text-emerald-600 font-black text-xl mt-1">₹${p.price} <span class="text-xs text-slate-400 font-bold">/ ${p.unit || 'Unit'}</span></p>
+                <p class="text-xs text-slate-500 font-medium mt-2">📍 District: <b>${p.district || 'N/A'}</b></p>
+              </div>
+
+              <button onclick="deleteProduct('${p._id}')" type="button" class="w-full mt-4 h-10 bg-rose-50 hover:bg-rose-100 active:scale-[0.98] text-rose-700 border border-rose-200/80 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition-all focus:ring-2 focus:ring-rose-500 focus:outline-none">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+                <span>Delete Crop</span>
+              </button>
+            </div>
+          `;
+        });
+      } catch (err) {
+        console.error(err);
+        grid.innerHTML = `<p class="col-span-full text-rose-500 font-bold py-8 text-center">Failed to load listed crops.</p>`;
+      }
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm("Are you sure you want to delete this crop listing?")) return;
+      try {
+        const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          alert('🗑️ Crop deleted successfully!');
+          loadMyListedCrops();
+        } else {
+          alert('Failed to delete crop');
+        }
+      } catch (err) {
+        alert('Server Error during deletion');
+      }
+    }
+
+    // Modal Handlers
     function openEditModal() {
       document.getElementById('editName').value = user.name || '';
       document.getElementById('editPhone').value = user.phone || '';
-      document.getElementById('editDistrict').value = user.district || 'Nanded';
+      document.getElementById('editDistrict').value = user.district || '';
       document.getElementById('editAddress').value = user.address || '';
       document.getElementById('editModal').classList.remove('hidden');
     }
@@ -172,120 +241,18 @@
       document.getElementById('editModal').classList.add('hidden');
     }
 
-    async function saveProfile(e) {
+    function saveProfile(e) {
       e.preventDefault();
-      const saveBtn = document.getElementById('saveBtn');
-      saveBtn.innerText = "Saving...";
-
-      const avatarFile = document.getElementById('editAvatarFile').files[0];
-      if (avatarFile) {
-        try {
-          user.avatar = await compressImage(avatarFile);
-        } catch (err) {
-          console.error("Avatar compression error:", err);
-        }
-      }
-
       user.name = document.getElementById('editName').value;
       user.phone = document.getElementById('editPhone').value;
       user.district = document.getElementById('editDistrict').value;
       user.address = document.getElementById('editAddress').value;
 
-      localStorage.setItem('userData', JSON.stringify(user));
-
+      localStorage.setItem('user', JSON.stringify(user));
       renderProfileInfo();
       closeEditModal();
-      saveBtn.innerText = "Save Changes";
-      alert('🎉 Profile details & Photo updated!');
+      alert('🎉 Profile updated successfully!');
     }
-
-    // Fetch My Crops
-    async function fetchMyProducts() {
-      try {
-        const res = await fetch('/api/products');
-        const allProducts = await res.json();
-
-        const myProducts = allProducts.filter(p => p.farmer && (p.farmer._id === user.id || p.farmer === user.id || p.farmer.email === user.email));
-        renderMyProducts(myProducts);
-      } catch (err) {
-        console.error("Fetch error:", err);
-      }
-    }
-
-    function renderMyProducts(products) {
-      const grid = document.getElementById('myProductsGrid');
-      const countBadge = document.getElementById('myProductCount');
-      grid.innerHTML = '';
-      countBadge.innerText = `${products.length} Crops`;
-
-      if (!products || products.length === 0) {
-        grid.innerHTML = `
-          <div class="col-span-full py-12 text-center text-slate-400 bg-white rounded-2xl border border-dashed border-slate-300">
-            <p class="text-lg font-semibold">You haven't listed any crops yet.</p>
-            <a href="add-product.html" class="inline-block mt-3 bg-emerald-600 text-white font-bold px-4 py-2 rounded-xl text-xs hover:bg-emerald-700 transition">
-              + Add Your First Crop
-            </a>
-          </div>
-        `;
-        return;
-      }
-
-      products.forEach(p => {
-        const imageUrl = p.image || 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400';
-
-        grid.innerHTML += `
-          <div class="bg-white rounded-2xl shadow-sm hover:shadow-md transition overflow-hidden border border-slate-100 flex flex-col justify-between">
-            <div>
-              <div class="relative">
-                <img src="${imageUrl}" alt="${p.title}" class="w-full h-44 object-cover">
-                <span class="absolute top-3 right-3 bg-emerald-800/90 backdrop-blur-md text-white text-xs px-2.5 py-1 rounded-full font-bold shadow-sm">
-                  ${p.category}
-                </span>
-              </div>
-              <div class="p-4">
-                <h4 class="text-base font-bold text-slate-800 capitalize leading-snug">${p.title}</h4>
-                <p class="text-emerald-600 font-extrabold text-xl mt-1">
-                  ₹${p.price} <span class="text-xs font-semibold text-slate-400">/ ${p.unit}</span>
-                </p>
-                <p class="text-xs text-slate-500 mt-2">📦 Available: <b>${p.quantityAvailable} ${p.unit}</b></p>
-                <p class="text-xs text-slate-500">📍 Location: <b>${p.district}</b></p>
-              </div>
-            </div>
-
-            <div class="p-4 pt-0">
-              <button onclick="deleteProduct('${p._id}')" class="w-full bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold py-2 rounded-xl text-xs transition flex items-center justify-center gap-1">
-                🗑️ Delete Crop
-              </button>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    async function deleteProduct(productId) {
-      if (!confirm('Are you sure you want to delete this crop listing?')) return;
-
-      try {
-        const res = await fetch(`/api/products/${productId}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        const data = await res.json();
-        if (res.ok) {
-          alert('🗑️ Crop deleted successfully!');
-          fetchMyProducts();
-        } else {
-          alert(data.message || 'Failed to delete crop');
-        }
-      } catch (err) {
-        alert('Server Error during deletion!');
-      }
-    }
-
-    fetchMyProducts();
   </script>
 </body>
 </html>

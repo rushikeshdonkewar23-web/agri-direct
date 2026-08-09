@@ -27,6 +27,23 @@ router.get('/', async (req, res) => {
   }
 });
 
+// 1.5 Get Single Product By ID
+router.get('/:id', async (req, res) => {
+  try {
+    if (!Product) {
+      return res.status(500).json({ message: "Product Model not loaded properly" });
+    }
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    res.json(product);
+  } catch (err) {
+    console.error("Fetch Product Details Error:", err);
+    res.status(500).json({ message: 'Error fetching product details', error: err.message });
+  }
+});
+
 // 2. Add Crop Endpoint (Safe from 500 Error)
 router.post('/', async (req, res) => {
   try {

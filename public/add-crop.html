@@ -3,182 +3,216 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Add Crop | Agri-Direct</title>
+  <title>Agri-Direct | Add New Crop Listing</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style> body { font-family: 'Plus Jakarta Sans', sans-serif; } </style>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  </style>
 </head>
 <body class="bg-stone-50 text-slate-800 min-h-screen flex flex-col justify-between">
 
-  <!-- Nav -->
-  <nav class="bg-emerald-900 text-white p-4 shadow-md">
-    <div class="max-w-4xl mx-auto flex justify-between items-center">
-      <a href="dashboard.html" class="text-xl font-black flex items-center gap-2">🌱 Agri-Direct</a>
-      <a href="dashboard.html" class="bg-emerald-800 hover:bg-emerald-700 text-xs font-bold px-4 py-2 rounded-xl transition">
-        ⬅️ Back to Dashboard
-      </a>
+  <div>
+    <!-- Top APMC Weather Ticker Bar -->
+    <div class="bg-emerald-950 text-emerald-300 text-[11px] font-semibold py-2 px-4 border-b border-emerald-800/50 flex flex-wrap justify-between items-center gap-2">
+      <div class="flex items-center gap-2 mx-auto sm:mx-0">
+        <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+        <span>✨ Post Crop Listing: Direct Farmer Marketplace</span>
+      </div>
+      <div class="mx-auto sm:mx-0 bg-emerald-900/60 text-emerald-200 px-3 py-0.5 rounded-full border border-emerald-700/50 flex items-center gap-1.5 text-[10px]">
+        <span>🌤️ Today's Weather:</span>
+        <span class="font-bold text-white">29°C, Clear Sky</span>
+      </div>
     </div>
-  </nav>
 
-  <!-- Form Container -->
-  <main class="max-w-xl mx-auto px-4 py-10 w-full">
-    <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-stone-200">
-      <h2 class="text-2xl font-black text-slate-800 mb-2">✨ Add New Crop Listing</h2>
-      <p class="text-xs text-slate-500 font-semibold mb-6">शेतकरी बंधूंनो, तुमच्या पिकाची माहिती आणि फोटो खाली भरा.</p>
+    <!-- Navigation Bar Header (Uses navbar.js) -->
+    <header id="app-navbar"></header>
+    <script src="navbar.js"></script>
 
-      <form id="cropForm" onsubmit="handleCropSubmit(event)" class="flex flex-col gap-4">
-        
-        <!-- Image Preview & Input -->
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-2">Crop Photo / पिकाचा फोटो</label>
-          <div class="border-2 border-dashed border-stone-300 rounded-2xl p-4 text-center cursor-pointer hover:border-emerald-500 transition relative bg-stone-50">
-            <img id="imagePreview" src="https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500" class="w-full h-44 object-cover rounded-xl mb-2">
-            <input type="file" id="imageInput" accept="image/*" onchange="compressAndPreviewImage(event)" class="absolute inset-0 opacity-0 cursor-pointer">
-            <p class="text-xs text-emerald-700 font-bold">📷 Click to upload/change photo</p>
+    <!-- Form Container -->
+    <main class="max-w-2xl mx-auto px-4 py-8 sm:py-10 w-full">
+      <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+        <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
+          <div>
+            <span class="bg-emerald-100 text-emerald-900 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full border border-emerald-200">
+              🌱 Direct Farmer Portal
+            </span>
+            <h1 class="text-xl sm:text-2xl font-black text-slate-800 mt-2">✨ Add New Crop Listing</h1>
+            <p class="text-xs text-slate-500 font-semibold mt-0.5">शेतकरी बंधूंनो, तुमच्या पिकाची माहिती आणि फोटो खाली भरा.</p>
           </div>
+          <a href="dashboard.html" class="text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 px-3.5 py-2 rounded-xl transition">
+            Back
+          </a>
         </div>
 
-        <!-- Title -->
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Crop Title / पिकाचे नाव</label>
-          <input type="text" id="title" required placeholder="e.g. Fresh Tomatoes / बटाटा" class="w-full border border-stone-300 rounded-xl p-3 text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-        </div>
-
-        <!-- Category & District -->
-        <div class="grid grid-cols-2 gap-3">
+        <form id="cropForm" onsubmit="handleCropSubmit(event)" class="space-y-4">
+          
+          <!-- Image Upload Preview Box -->
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Category / प्रकार</label>
-            <select id="category" class="w-full border border-stone-300 rounded-xl p-3 text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-              <option value="Vegetables">Vegetables (भाज्या)</option>
-              <option value="Fruits">Fruits (फळे)</option>
-              <option value="Soyabean">Soyabean (सोयाबीन)</option>
-              <option value="Cotton">Cotton (कापूस)</option>
-              <option value="Halad">Halad (हळद)</option>
-              <option value="Grains">Grains (धान्य)</option>
-            </select>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase">Crop Photo / पिकाचा फोटो <span class="text-rose-500">*</span></label>
+            <div class="border-2 border-dashed border-slate-300 rounded-2xl p-4 text-center cursor-pointer hover:border-emerald-500 transition relative bg-slate-50">
+              <img id="imagePreview" src="https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500" class="w-full h-48 object-cover rounded-xl mb-2 border border-slate-200 shadow-2xs">
+              <input type="file" id="imageInput" accept="image/*" onchange="compressAndPreviewImage(event)" class="absolute inset-0 opacity-0 cursor-pointer">
+              <p class="text-xs text-emerald-700 font-extrabold">📷 Click to upload or change crop photo</p>
+            </div>
           </div>
 
+          <!-- Crop Title -->
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">District / जिल्हा</label>
-            <select id="district" class="w-full border border-stone-300 rounded-xl p-3 text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-              <option value="Nanded">Nanded</option>
-              <option value="Nashik">Nashik</option>
-              <option value="Yavatmal">Yavatmal</option>
-              <option value="Sangli">Sangli</option>
-              <option value="Latur">Latur</option>
-              <option value="Solapur">Solapur</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Price & Unit -->
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Price / दर (₹)</label>
-            <input type="number" id="price" required placeholder="e.g. 40" class="w-full border border-stone-300 rounded-xl p-3 text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            <label for="title" class="block text-xs font-bold text-slate-700 mb-1 uppercase">Crop Title / पिकाचे नाव <span class="text-rose-500">*</span></label>
+            <input type="text" id="title" required placeholder="e.g. Fresh Organic Tomatoes, Kapus, Soyabean" class="w-full border border-slate-300 rounded-xl p-3 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-slate-800">
           </div>
 
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Unit / एकक</label>
-            <select id="unit" class="w-full border border-stone-300 rounded-xl p-3 text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-              <option value="kg">kg</option>
-              <option value="Quintal">Quintal</option>
-              <option value="Ton">Ton</option>
-            </select>
+          <!-- Category & District Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="category" class="block text-xs font-bold text-slate-700 mb-1 uppercase">Category / प्रकार <span class="text-rose-500">*</span></label>
+              <select id="category" class="w-full border border-slate-300 rounded-xl p-3 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
+                <option value="Vegetables">Vegetables (भाज्या)</option>
+                <option value="Fruits">Fruits (फळे)</option>
+                <option value="Soyabean">Soyabean (सोयाबीन)</option>
+                <option value="Cotton">Cotton (कापूस)</option>
+                <option value="Halad">Halad (हळद)</option>
+                <option value="Grains">Grains (धान्य)</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="district" class="block text-xs font-bold text-slate-700 mb-1 uppercase">District / जिल्हा <span class="text-rose-500">*</span></label>
+              <select id="district" class="w-full border border-slate-300 rounded-xl p-3 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
+                <option value="Nanded">Nanded (नांदेड)</option>
+                <option value="Nashik">Nashik (नाशिक)</option>
+                <option value="Yavatmal">Yavatmal (यवतमाळ)</option>
+                <option value="Sangli">Sangli (सांगली)</option>
+                <option value="Latur">Latur (लातूर)</option>
+                <option value="Solapur">Solapur (सोलापूर)</option>
+                <option value="Pune">Pune (पुणे)</option>
+                <option value="Chhatrapati Sambhajinagar">Chhatrapati Sambhajinagar (छ. संभाजीनगर)</option>
+              </select>
+            </div>
           </div>
-        </div>
 
-        <!-- Quantity & Phone -->
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Stock Quantity</label>
-            <input type="number" id="quantityAvailable" required placeholder="e.g. 500" class="w-full border border-stone-300 rounded-xl p-3 text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+          <!-- Price, Unit & Quantity Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label for="price" class="block text-xs font-bold text-slate-700 mb-1 uppercase">Price (₹) <span class="text-rose-500">*</span></label>
+              <input type="number" id="price" required placeholder="e.g. 4850" class="w-full border border-slate-300 rounded-xl p-3 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 outline-none">
+            </div>
+
+            <div>
+              <label for="unit" class="block text-xs font-bold text-slate-700 mb-1 uppercase">Unit / एकक <span class="text-rose-500">*</span></label>
+              <select id="unit" class="w-full border border-slate-300 rounded-xl p-3 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
+                <option value="kg">Per kg</option>
+                <option value="Quintal">Per Quintal (क्विंटल)</option>
+                <option value="Ton">Per Ton</option>
+                <option value="Dozen">Per Dozen</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="quantityAvailable" class="block text-xs font-bold text-slate-700 mb-1 uppercase">Stock / साठा <span class="text-rose-500">*</span></label>
+              <input type="text" id="quantityAvailable" required placeholder="e.g. 500 kg or 20 Qtl" class="w-full border border-slate-300 rounded-xl p-3 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 outline-none">
+            </div>
           </div>
 
+          <!-- Phone Number -->
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Contact Phone</label>
-            <input type="tel" id="phone" required placeholder="10-digit mobile" class="w-full border border-stone-300 rounded-xl p-3 text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            <label for="phone" class="block text-xs font-bold text-slate-700 mb-1 uppercase">Contact Mobile / मोबाईल <span class="text-rose-500">*</span></label>
+            <input type="tel" id="phone" required placeholder="10-digit mobile number" maxlength="10" pattern="[0-9]{10}" class="w-full border border-slate-300 rounded-xl p-3 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 outline-none">
           </div>
-        </div>
 
-        <button type="submit" id="submitBtn" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold py-3.5 rounded-xl text-sm shadow-lg transition mt-4">
-          Publish Crop Listing 🚀
-        </button>
+          <!-- Submit Button -->
+          <button type="submit" id="submitBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-extrabold py-3.5 px-4 rounded-xl transition shadow-lg shadow-emerald-700/20 text-xs sm:text-sm flex items-center justify-center gap-2 mt-2">
+            <span>🚀 Publish Crop Listing on Marketplace</span>
+          </button>
 
-      </form>
-    </div>
-  </main>
+        </form>
+      </div>
+    </main>
+  </div>
 
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 text-center py-6 text-xs text-slate-500 font-semibold mt-16">
+    Agri-Direct Portal &copy; 2026 | Direct Farmer Connection Network
+  </footer>
+
+  <!-- Script Logic -->
   <script>
-    let base64Image = '';
+    let base64Image = 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500';
 
-    // Automatically Compress Uploaded Image
-    function compressAndPreviewImage(e) {
-      const file = e.target.files[0];
+    document.addEventListener('DOMContentLoaded', () => {
+      let user = {};
+      try {
+        user = JSON.parse(localStorage.getItem('user') || '{}');
+      } catch (e) {}
+
+      if (user.phone) document.getElementById('phone').value = user.phone;
+      if (user.district) document.getElementById('district').value = user.district;
+    });
+
+    // Image Compression Helper
+    function compressAndPreviewImage(event) {
+      const file = event.target.files[0];
       if (!file) return;
 
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = function (event) {
+      reader.onload = (e) => {
         const img = new Image();
-        img.src = event.target.result;
-        img.onload = function () {
+        img.src = e.target.result;
+        img.onload = () => {
           const canvas = document.createElement('canvas');
-          const maxWidth = 600; // Resize image width
-          const scaleSize = maxWidth / img.width;
+          const maxWidth = 500;
+          const scale = maxWidth / img.width;
           canvas.width = maxWidth;
-          canvas.height = img.height * scaleSize;
-
+          canvas.height = img.height * scale;
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-          // Compress JPEG Quality to 0.6
-          base64Image = canvas.toDataURL('image/jpeg', 0.6);
+          
+          base64Image = canvas.toDataURL('image/jpeg', 0.8);
           document.getElementById('imagePreview').src = base64Image;
         };
       };
     }
 
-    // Submit Crop
+    // Submit Crop Form
     async function handleCropSubmit(e) {
       e.preventDefault();
-      
       const submitBtn = document.getElementById('submitBtn');
-      submitBtn.innerText = 'Publishing...';
+      submitBtn.innerText = "⏳ Publishing crop listing...";
       submitBtn.disabled = true;
 
-      const payload = {
+      const body = {
         title: document.getElementById('title').value,
         category: document.getElementById('category').value,
         district: document.getElementById('district').value,
-        price: Number(document.getElementById('price').value),
+        price: document.getElementById('price').value,
         unit: document.getElementById('unit').value,
-        quantityAvailable: Number(document.getElementById('quantityAvailable').value),
+        quantityAvailable: document.getElementById('quantityAvailable').value,
         phone: document.getElementById('phone').value,
-        image: base64Image || 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500'
+        image: base64Image
       };
 
       try {
         const res = await fetch('/api/products', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(body)
         });
 
         const data = await res.json();
-
         if (res.ok) {
-          alert('🎉 Crop published successfully!');
+          alert('🎉 Crop Published Successfully!');
           window.location.href = 'dashboard.html';
         } else {
           alert(data.message || 'Failed to publish crop');
-          submitBtn.innerText = 'Publish Crop Listing 🚀';
-          submitBtn.disabled = false;
         }
       } catch (err) {
-        console.error(err);
-        alert('Server Error during publication');
-        submitBtn.innerText = 'Publish Crop Listing 🚀';
+        alert('Server Connection Error!');
+      } finally {
+        submitBtn.innerText = "🚀 Publish Crop Listing on Marketplace";
         submitBtn.disabled = false;
       }
     }

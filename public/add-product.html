@@ -3,146 +3,191 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agri-Direct | Add New Crop</title>
+  <title>Agri-Direct | Add Product</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  </style>
 </head>
-<body class="bg-emerald-50 min-h-screen flex items-center justify-center p-4">
+<body class="bg-stone-50 text-slate-800 min-h-screen flex flex-col justify-between">
 
-  <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-lg border border-emerald-100">
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-bold text-emerald-800">🌾 Add New Crop / Produce</h2>
-      <a href="dashboard.html" class="text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1.5 rounded-lg text-gray-700 font-semibold transition">Back</a>
+  <div>
+    <!-- Top APMC Weather Ticker Bar -->
+    <div class="bg-emerald-950 text-emerald-300 text-[11px] font-semibold py-2 px-4 border-b border-emerald-800/50 flex flex-wrap justify-between items-center gap-2">
+      <div class="flex items-center gap-2 mx-auto sm:mx-0">
+        <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+        <span>✨ Add Produce: Direct Agriculture Marketplace Listing</span>
+      </div>
+      <div class="mx-auto sm:mx-0 bg-emerald-900/60 text-emerald-200 px-3 py-0.5 rounded-full border border-emerald-700/50 flex items-center gap-1.5 text-[10px]">
+        <span>🌤️ Today's Weather:</span>
+        <span class="font-bold text-white">29°C, Clear Sky</span>
+      </div>
     </div>
 
-    <form id="addProductForm" onsubmit="handleAddProduct(event)" class="space-y-4">
-      <div>
-        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Crop Title / Name</label>
-        <input type="text" id="title" placeholder="e.g. Fresh Organic Tomatoes, Kapus, Soyabean" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" required>
-      </div>
+    <!-- Navigation Bar Header (Uses navbar.js) -->
+    <header id="app-navbar"></header>
+    <script src="navbar.js"></script>
 
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Category</label>
-          <select id="category" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" required>
-            <option value="Vegetables">Vegetables (भाजीपाला)</option>
-            <option value="Fruits">Fruits (फळे)</option>
-            <option value="Cotton">Cotton (कापूस)</option>
-            <option value="Halad">Halad / Turmeric (हळद)</option>
-            <option value="Soyabean">Soyabean (सोयाबीन)</option>
-            <option value="Tur">Tur & Grains (तूर व धान्य)</option>
-            <option value="Spices">Spices & Others (मसाले व इतर)</option>
-          </select>
+    <!-- Form Container -->
+    <main class="max-w-2xl mx-auto px-4 py-8 sm:py-10 w-full">
+      <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+        <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
+          <div>
+            <span class="bg-emerald-100 text-emerald-900 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full border border-emerald-200">
+              🌾 Direct Farmer Portal
+            </span>
+            <h1 class="text-xl sm:text-2xl font-black text-slate-800 mt-2">🌾 Add New Crop / Produce</h1>
+            <p class="text-xs text-slate-500 font-semibold mt-0.5">List fresh produce to reach verified buyers directly.</p>
+          </div>
+          <a href="dashboard.html" class="text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 px-3.5 py-2 rounded-xl transition">
+            Back
+          </a>
         </div>
-        <div>
-          <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Price (₹)</label>
-          <input type="number" id="price" placeholder="Price per unit" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" required>
-        </div>
-      </div>
 
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Unit</label>
-          <select id="unit" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
-            <option value="kg">Per kg</option>
-            <option value="Quintal">Per Quintal (क्विंटल)</option>
-            <option value="Ton">Per Ton</option>
-            <option value="Dozen">Per Dozen</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Quantity Available</label>
-          <input type="number" id="quantityAvailable" placeholder="e.g. 500" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" required>
-        </div>
-      </div>
+        <form id="addProductForm" onsubmit="handleAddProduct(event)" class="space-y-4">
+          
+          <!-- Image Dropzone -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase">Crop Photo / पिकाचा फोटो <span class="text-rose-500">*</span></label>
+            <div class="border-2 border-dashed border-slate-300 rounded-2xl p-4 text-center cursor-pointer hover:border-emerald-500 transition relative bg-slate-50">
+              <img id="imagePreview" src="https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500" class="w-full h-48 object-cover rounded-xl mb-2 border border-slate-200 shadow-2xs">
+              <input type="file" id="imageInput" accept="image/*" onchange="compressAndPreviewImage(event)" class="absolute inset-0 opacity-0 cursor-pointer">
+              <p class="text-xs text-emerald-700 font-extrabold">📷 Click to upload or change crop photo</p>
+            </div>
+          </div>
 
-      <div>
-        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">District / Location</label>
-        <input type="text" id="district" placeholder="e.g. Nanded, Pune, Nashik" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" required>
-      </div>
+          <!-- Crop Title -->
+          <div>
+            <label for="title" class="block text-xs font-bold text-slate-700 mb-1 uppercase">Crop Title / Name <span class="text-rose-500">*</span></label>
+            <input type="text" id="title" placeholder="e.g. Fresh Organic Tomatoes, Kapus, Soyabean" class="w-full border border-slate-300 rounded-xl p-3 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none text-slate-800" required>
+          </div>
 
-      <!-- Gallery Image Input -->
-      <div>
-        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Select Crop Photo (From Gallery)</label>
-        <input type="file" id="imageFile" accept="image/*" class="w-full p-2 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-emerald-100 file:text-emerald-700 hover:file:bg-emerald-200 cursor-pointer">
-      </div>
+          <!-- Category & District Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="category" class="block text-xs font-bold text-slate-700 mb-1 uppercase">Category <span class="text-rose-500">*</span></label>
+              <select id="category" class="w-full border border-slate-300 rounded-xl p-3 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 outline-none bg-white" required>
+                <option value="Vegetables">Vegetables (भाजीपाला)</option>
+                <option value="Fruits">Fruits (फळे)</option>
+                <option value="Cotton">Cotton (कापूस)</option>
+                <option value="Halad">Halad / Turmeric (हळद)</option>
+                <option value="Soyabean">Soyabean (सोयाबीन)</option>
+                <option value="Grains">Grains (धान्य)</option>
+              </select>
+            </div>
 
-      <button type="submit" id="submitBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow-md transition">
-        🚀 List Crop on Marketplace
-      </button>
-    </form>
+            <div>
+              <label for="district" class="block text-xs font-bold text-slate-700 mb-1 uppercase">District / Location <span class="text-rose-500">*</span></label>
+              <input type="text" id="district" placeholder="e.g. Nanded, Pune, Nashik" class="w-full border border-slate-300 rounded-xl p-3 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 outline-none" required>
+            </div>
+          </div>
+
+          <!-- Price, Unit & Quantity Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label for="price" class="block text-xs font-bold text-slate-700 mb-1 uppercase">Price (₹) <span class="text-rose-500">*</span></label>
+              <input type="number" id="price" placeholder="e.g. 40" class="w-full border border-slate-300 rounded-xl p-3 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 outline-none" required>
+            </div>
+
+            <div>
+              <label for="unit" class="block text-xs font-bold text-slate-700 mb-1 uppercase">Unit <span class="text-rose-500">*</span></label>
+              <select id="unit" class="w-full border border-slate-300 rounded-xl p-3 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 outline-none bg-white" required>
+                <option value="kg">Per kg</option>
+                <option value="Quintal">Per Quintal (क्विंटल)</option>
+                <option value="Ton">Per Ton</option>
+                <option value="Dozen">Per Dozen</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="quantityAvailable" class="block text-xs font-bold text-slate-700 mb-1 uppercase">Quantity Available <span class="text-rose-500">*</span></label>
+              <input type="text" id="quantityAvailable" placeholder="e.g. 500" class="w-full border border-slate-300 rounded-xl p-3 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 outline-none" required>
+            </div>
+          </div>
+
+          <!-- Phone Number -->
+          <div>
+            <label for="phone" class="block text-xs font-bold text-slate-700 mb-1 uppercase">Contact Phone / मोबाईल <span class="text-rose-500">*</span></label>
+            <input type="tel" id="phone" placeholder="10-digit mobile number" maxlength="10" pattern="[0-9]{10}" class="w-full border border-slate-300 rounded-xl p-3 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-emerald-500 outline-none" required>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" id="submitBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-extrabold py-3.5 px-4 rounded-xl transition shadow-lg shadow-emerald-700/20 text-xs sm:text-sm flex items-center justify-center gap-2 mt-2">
+            <span>🚀 List Crop on Marketplace</span>
+          </button>
+
+        </form>
+      </div>
+    </main>
   </div>
 
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 text-center py-6 text-xs text-slate-500 font-semibold mt-16">
+    Agri-Direct Portal &copy; 2026 | Direct Farmer Connection Network
+  </footer>
+
+  <!-- Script Logic -->
   <script>
-    const token = localStorage.getItem('userToken');
-    if (!token) {
-      window.location.href = 'index.html';
-    }
+    let base64Image = 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500';
 
-    // Image Compression Helper
-    function compressAndConvertToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (event) => {
-          const img = new Image();
-          img.src = event.target.result;
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const maxWidth = 800;
-            const scaleSize = maxWidth / img.width;
-            
-            if (scaleSize < 1) {
-              canvas.width = maxWidth;
-              canvas.height = img.height * scaleSize;
-            } else {
-              canvas.width = img.width;
-              canvas.height = img.height;
-            }
+    document.addEventListener('DOMContentLoaded', () => {
+      let user = {};
+      try {
+        user = JSON.parse(localStorage.getItem('user') || '{}');
+      } catch (e) {}
 
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            resolve(canvas.toDataURL('image/jpeg', 0.7));
-          };
-          img.onerror = (err) => reject(err);
+      if (user.phone) document.getElementById('phone').value = user.phone;
+      if (user.district) document.getElementById('district').value = user.district;
+    });
+
+    function compressAndPreviewImage(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (e) => {
+        const img = new Image();
+        img.src = e.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxWidth = 500;
+          const scale = maxWidth / img.width;
+          canvas.width = maxWidth;
+          canvas.height = img.height * scale;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          
+          base64Image = canvas.toDataURL('image/jpeg', 0.8);
+          document.getElementById('imagePreview').src = base64Image;
         };
-        reader.onerror = (err) => reject(err);
-      });
+      };
     }
 
     async function handleAddProduct(e) {
       e.preventDefault();
       const submitBtn = document.getElementById('submitBtn');
-      submitBtn.innerText = "Uploading Image & Adding Crop...";
+      submitBtn.innerText = "⏳ Publishing crop listing...";
       submitBtn.disabled = true;
-
-      const fileInput = document.getElementById('imageFile');
-      let imageBase64 = '';
-
-      if (fileInput.files && fileInput.files[0]) {
-        try {
-          imageBase64 = await compressAndConvertToBase64(fileInput.files[0]);
-        } catch (err) {
-          console.error("Error compressing image:", err);
-        }
-      }
 
       const body = {
         title: document.getElementById('title').value,
         category: document.getElementById('category').value,
-        price: Number(document.getElementById('price').value),
+        price: document.getElementById('price').value,
         unit: document.getElementById('unit').value,
-        quantityAvailable: Number(document.getElementById('quantityAvailable').value),
+        quantityAvailable: document.getElementById('quantityAvailable').value,
         district: document.getElementById('district').value,
-        image: imageBase64 || 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500'
+        phone: document.getElementById('phone').value,
+        image: base64Image
       };
 
       try {
         const res = await fetch('/api/products', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body)
         });
 
